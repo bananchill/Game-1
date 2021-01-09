@@ -1,5 +1,5 @@
-﻿using System.IO;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Assets.Scrypts
@@ -7,23 +7,22 @@ namespace Assets.Scrypts
     class Registration : MonoBehaviour
     {
         private Character character;
-        private string path;
-        private FileStream fileStream;
         public InputField nickname, password, mail;
-        ClientServer client;
-            
+
         public void RegistrationNewCharacter()
         {
-            path = "/Character.json";
-            fileStream = File.Create(path);
-            character = new Character(nickname.text, password.text, mail.text);
-            Save(character);
-            client.AddCharacter(character);
+            character = new Character(mail.text, password.text, nickname.text);
+            Account.Save(character);
+            ClientServer.AddCharacter(character);
+            SceneManager.LoadSceneAsync("Main");
         }
 
-        private void Save(Character newCharacter)
+        public void Entry()
         {
-            File.WriteAllText(Application.streamingAssetsPath + path, JsonUtility.ToJson(newCharacter));
+            character = new Character(mail.text, password.text);
+            Account.Save(character);
+            ClientServer.Entry(character);
+            SceneManager.LoadSceneAsync("Main");
         }
     }
 }

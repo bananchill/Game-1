@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Xml.Serialization;
+using UnityEngine;
 
 namespace Assets.Scrypts
 {
@@ -58,7 +59,7 @@ namespace Assets.Scrypts
             try
             {
                 string s = reader.ReadLine();
-                if(s == null)
+                if (s == null)
                 {
                     return null;
                 }
@@ -68,7 +69,7 @@ namespace Assets.Scrypts
                     message = (Message)serializer.Deserialize(xmlStream);
                 }
             }
-            catch (ArgumentNullException)
+            catch (Exception)
             {
                 return null;
             }

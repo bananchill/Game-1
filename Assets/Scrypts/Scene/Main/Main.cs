@@ -8,12 +8,22 @@ namespace Assets.Scrypts
         public InputField input;
         public Text nickname, gold, crystal;
         ClientServer client;
+        Account account;
 
         public void Start()
         {
-            client = new ClientServer();
-            client.StartClient();
-            //Account.CheckCharacter();
+            if (client == null)
+            {
+                client = new ClientServer();
+                account = new Account();
+
+                client.StartClient();
+                account.CheckCharacter();
+                nickname.text = Account.character.Nickname();
+                gold.text = Account.character.Gold().ToString();
+                crystal.text = Account.character.Crystal().ToString();
+                client.StartMain();
+            }
         }
 
         public void SendMessage()

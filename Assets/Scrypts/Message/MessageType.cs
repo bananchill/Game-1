@@ -11,6 +11,8 @@
         TEST_WORK,
         AUTHORIZATION,
         NULL,
-        REGISTRATION
+        REGISTRATION,
+        ERROR,
+        ERROR_AUTHORIZATION
     }
 }

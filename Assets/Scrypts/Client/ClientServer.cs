@@ -2,7 +2,6 @@
 using System;
 using System.Net.Sockets;
 using System.Threading;
-using UnityEngine.UI;
 
 namespace Assets.Scrypts
 {
@@ -14,10 +13,12 @@ namespace Assets.Scrypts
          * после чего данный клиент думает, что сервер упал
          */
 
-        protected Connection connection;
+        protected static Connection connection;
         public volatile bool clientConnected = false;
         private bool online = false;
         Thread receiveThread, checkThread;
+
+        public ClientServer() { }
 
         public void StartClient()
         {
@@ -28,7 +29,6 @@ namespace Assets.Scrypts
                 TcpClient client = new TcpClient("localhost", 3000);
                 connection = new Connection(client);
                 ClientHandshake();
-                StartMain();
             }
             catch (Exception)
             {
@@ -36,7 +36,7 @@ namespace Assets.Scrypts
             }
         }
 
-        private void StartMain()
+        public void StartMain()
         {
             receiveThread = new Thread(ClientMainLoop);
             receiveThread.Start();
@@ -104,9 +104,9 @@ namespace Assets.Scrypts
                 connection.Send(message);
                 StartMain();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                ConsoleHelper.WriteMessage("Ошибка отправки");
+                ConsoleHelper.WriteMessage("Ошибка отправки " + e);
                 clientConnected = false;
             }
         }
@@ -121,11 +121,15 @@ namespace Assets.Scrypts
                 {
                     if (message.Type() == MessageType.TEXT)
                     {
-                        ProcessIncomingMessage(message.DataFirst());
+                        ProcessIncomingMessage(message.Data());
                     }
-                    if (message.Type() == MessageType.AUTHORIZATION)
+                    if (message.Type() == MessageType.AUTHORIZATION || message.Type() == MessageType.REGISTRATION)
                     {
                         SetAccount(message);
+                    }
+                    if (message.Type() == MessageType.ERROR_AUTHORIZATION)
+                    {
+                        Debug.Log("Error authorization");
                     }
                     online = true;
                 }
@@ -153,20 +157,23 @@ namespace Assets.Scrypts
             this.clientConnected = clientConnected;
         }
 
-        public void GetAccount(string identifier, string password)
-        {
-            SendTextMessage(new Message(MessageType.AUTHORIZATION, identifier, password));
-        }
-
         public void SetAccount(Message message)
         {
-            Account.character = new Character(int.Parse(message.DataFirst()), message.DataSecond(), message.DataThird(),
-                message.DataFourth(), int.Parse(message.DataFifth()), int.Parse(message.DataSixth()));
+            string[] data = message.Data().Split('#');
+
+            Account.character = new Character(int.Parse(data[0]), data[1], data[2], data[3], int.Parse(data[4]), int.Parse(data[5]));
         }
 
-        public void AddCharacter(Character character)
+        public static void AddCharacter(Character character)
         {
-            SendTextMessage(new Message(MessageType.REGISTRATION, character.Nickname(), character.Password(), character.Mail()));
+            string data = character.Mail() + "#" + character.Password() + "#" + character.Nickname();
+            connection.Send(new Message(MessageType.REGISTRATION, data));
+        }
+
+        public static void Entry(Character character)
+        {
+            string data = character.Mail() + "#" + character.Password();
+            connection.Send(new Message(MessageType.AUTHORIZATION, data));
         }
     }
 }

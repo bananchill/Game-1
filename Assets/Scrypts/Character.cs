@@ -1,22 +1,44 @@
 ﻿using System;
+using System.Xml.Serialization;
 
 namespace Assets.Scrypts
 {
     [Serializable]
     public class Character
     {
+        [NonSerialized]
         private int id;
+
+        [NonSerialized]
         private string nickname;
-        private string password;
+
         private string mail;
+
+        private string password;
+
+        [NonSerialized]
         private int gold;
+
+        [NonSerialized]
         private int crystal;
 
-        public Character(string nickname, string password, string mail)
+        [NonSerialized]
+        private string xml;
+
+        public Character() { }
+        public Character(string mail, string password)
         {
+            this.mail = mail;
+            this.password = password;
+            xml = "<Character><mail>" + mail + "</mail><password>" + password + "</password></Character>";
+        }
+
+        public Character(string mail, string password, string nickname)
+        {
+            this.mail = mail;
             this.nickname = nickname;
             this.password = password;
-            this.mail = mail;
+            xml = "<Character><mail>" + mail + "</mail><password>" + password + "</password></Character>";
         }
 
         public Character(int id, string nickname, string password, string mail, int gold, int crystal)
@@ -27,6 +49,7 @@ namespace Assets.Scrypts
             this.mail = mail;
             this.gold = gold;
             this.crystal = crystal;
+            xml = "<Character><mail>" + mail + "</mail><password>" + password + "</password></Character>";
         }
 
         public int Id()
@@ -57,6 +80,11 @@ namespace Assets.Scrypts
         public int Crystal()
         {
             return crystal;
+        }
+
+        public string Xml()
+        {
+            return xml;
         }
     }
 }
