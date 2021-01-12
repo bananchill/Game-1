@@ -10,8 +10,7 @@ public class Cli {
     private int gold;
     private int crystal;
 
-    public Cli(String userName, Connection connection) {
-        nickname = userName;
+    public Cli(Connection connection) {
         this.connection = connection;
         status = true;
     }
@@ -43,33 +42,19 @@ public class Cli {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public boolean isStatus() {
         return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 
     public String getNickname() {
         return nickname;
     }
 
-    public void setNickname(String name) {
-        this.nickname = name;
-    }
-
     public Connection getConnection() {
         return connection;
     }
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
+    public void setConnection(Connection connection) { this.connection = connection; }
 
     public boolean isOnline() {
         return status;
@@ -83,32 +68,16 @@ public class Cli {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public int getGold() {
         return gold;
     }
 
-    public void setGold(int gold) {
-        this.gold = gold;
-    }
-
     public int getCrystal() {
         return crystal;
-    }
-
-    public void setCrystal(int crystal) {
-        this.crystal = crystal;
     }
 
     public void close() {

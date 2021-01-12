@@ -2,9 +2,8 @@
 {
     public enum MessageType
     {
-        NAME_REQUEST,
-        USER_NAME,
-        NAME_ACCEPTED,
+        CONNECTION_REQUEST,
+        CONNECTION_ACCEPTED,
         USER_ADDED,
         USER_REMOVED,
         TEXT,
@@ -14,6 +13,7 @@
         REGISTRATION,
         ERROR,
         ERROR_AUTHORIZATION,
-        ERROR_REGISTRATION
+        ERROR_REGISTRATION,
+        GAME
     }
 }

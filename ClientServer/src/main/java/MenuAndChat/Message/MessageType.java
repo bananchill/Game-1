@@ -1,9 +1,8 @@
 package MenuAndChat.Message;
 
 public enum MessageType {
-    NAME_REQUEST,
-    NAME_ACCEPTED,
-    USER_NAME,
+    CONNECTION_REQUEST,
+    CONNECTION_ACCEPTED,
     USER_ADDED,
     TEXT,
     GAME,

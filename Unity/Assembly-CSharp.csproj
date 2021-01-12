@@ -57,14 +57,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Menu.cs" />
-    <Compile Include="Assets\MessageBox.cs" />
     <Compile Include="Assets\Scrypts\Account.cs" />
     <Compile Include="Assets\Scrypts\Character.cs" />
     <Compile Include="Assets\Scrypts\Chest\Chest.cs" />
     <Compile Include="Assets\Scrypts\Chest\ChestType.cs" />
     <Compile Include="Assets\Scrypts\Client\ClientServer.cs" />
     <Compile Include="Assets\Scrypts\Client\Connection.cs" />
+    <Compile Include="Assets\Scrypts\Client\GameServer.cs" />
     <Compile Include="Assets\Scrypts\ConsoleHelper.cs" />
     <Compile Include="Assets\Scrypts\GameFirst\Camera.cs" />
     <Compile Include="Assets\Scrypts\GameFirst\Game.cs" />

@@ -10,15 +10,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ServerMenuAndChat extends Thread {
     private static List<Cli> connectionList = new ArrayList<>();
-    static DatabaseHelper databaseHelper = new DatabaseHelper();
+    private static List<Cli> gamerList = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(3000)) {
-            ConsoleHelper.writeMessage("Сервер запущен");
-            databaseHelper.connectDatabase();
+            ConsoleHelper.writeMessage("Server started");
+            DatabaseHelper.connectDatabase();
 
             Check check = new Check();
             check.start();
@@ -40,20 +41,31 @@ public class ServerMenuAndChat extends Thread {
 
         @Override
         public void run() {
-            String userName;
-            Connection connection = null;
             Cli cli;
-            try {
-                connection = new Connection(socket);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            ConsoleHelper.writeMessage("Установлено новое соединение с удаленным адресом " + socket.getRemoteSocketAddress());
-            try {
+            try (Connection connection = new Connection(socket)) {
+                ConsoleHelper.writeMessage("Установлено новое соединение с удаленным адресом " + socket.getRemoteSocketAddress());
                 cli = serverHandshake(connection);
-                userName = cli.getNickname();
-                sendBroadcastMessage(new Message(MessageType.USER_ADDED, userName));
-                serverMainLoop(connection, cli);
+
+                while (true) {
+                    Message message = connection.receive();
+                    if (message != null) {
+                        if (message.getType() == MessageType.AUTHORIZATION) {
+                            ConsoleHelper.writeMessage("Client want to authorization");
+                            cli = getAccount(connection, message);
+                            break;
+                        } else if (message.getType() == MessageType.REGISTRATION) {
+                            ConsoleHelper.writeMessage("Client want to registration");
+                            cli = addAccount(connection, message);
+                            break;
+                        }
+                    } else {
+                        clientRemove(cli);
+                        return;
+                    }
+                }
+
+                sendBroadcastMessage(new Message(MessageType.USER_ADDED, cli.getNickname()));
+                serverMainLoop(cli);
             } catch (IOException e) {
                 ConsoleHelper.writeMessage("Ошибка при обмене данными с удаленным адресом");
             }
@@ -61,26 +73,23 @@ public class ServerMenuAndChat extends Thread {
 
         private Cli serverHandshake(Connection connection) throws IOException {
             while (true) {
-                connection.send(new Message(MessageType.NAME_REQUEST));
+                connection.send(new Message(MessageType.CONNECTION_REQUEST));
                 Message message = connection.receive();
 
                 if (message != null) {
-                    if (message.getType() == MessageType.USER_NAME) {
-                        if (!message.getData().isEmpty()) {
-                            Cli cli = new Cli(message.getData(), connection);
-                            connectionList.add(cli);
-                            connection.send(new Message(MessageType.NAME_ACCEPTED));
-                            return cli;
-                        }
-                    } else if (message.getType() == MessageType.TEST_WORK) {
+                    if (message.getType() == MessageType.CONNECTION_ACCEPTED) {
+                        Cli cli = new Cli(connection);
+                        connectionList.add(cli);
+                        connection.send(new Message(MessageType.CONNECTION_ACCEPTED));
+                        return cli;
                     }
                 }
             }
         }
 
-        private void serverMainLoop(Connection connection, Cli cli) throws IOException {
+        private void serverMainLoop(Cli cli) throws IOException {
             while (true) {
-                Message message = connection.receive();
+                Message message = cli.getConnection().receive();
                 if (message != null) {
                     if (message.getType() == MessageType.TEXT) {
                         String s = cli.getNickname() + ": " + message.getData();
@@ -88,12 +97,8 @@ public class ServerMenuAndChat extends Thread {
                         sendBroadcastMessage(formattedMessage);
                     } else if (message.getType() == MessageType.TEST_WORK) {
                         cli.setOnline(true);
-                    } else if (message.getType() == MessageType.AUTHORIZATION) {
-                        ConsoleHelper.writeMessage("Client want to authorization");
-                        getAccount(connection, message);
-                    } else if (message.getType() == MessageType.REGISTRATION) {
-                        ConsoleHelper.writeMessage("Client want to registration");
-                        addAccount(connection, message);
+                    } else if (message.getType() == MessageType.GAME) {
+                        clientGoGame(cli);
                     } else {
                         ConsoleHelper.writeMessage("Error type " + message.getType() + " " + message.getData());
                     }
@@ -132,12 +137,6 @@ public class ServerMenuAndChat extends Thread {
         }
     }
 
-    private static void clientRemove(Cli client) {
-        client.close();
-        connectionList.remove(client);
-        ConsoleHelper.writeMessage("Error happened, client " + client.getNickname() + " disconnected");
-    }
-
     public static void sendBroadcastMessage(Message message) {
         try {
             for (Cli client : connectionList) {
@@ -159,32 +158,37 @@ public class ServerMenuAndChat extends Thread {
         }
     }
 
-    private static void getAccount(Connection connection, Message message) throws JsonProcessingException {
+    private static Cli getAccount(Connection connection, Message message) throws JsonProcessingException {
         String[] data = message.getData().split("#");
-        String mail = null, password = null;
+        String mail, password;
         try {
             mail = data[0];
             password = data[1];
         } catch (Exception e) {
             sendMessage(connection, new Message(MessageType.ERROR_AUTHORIZATION));
             ConsoleHelper.writeMessage("Client wasn't founded");
-            return;
+            return null;
         }
-        Cli cli = databaseHelper.entryCli(mail, password);
+        Cli cli = DatabaseHelper.entryCli(mail, password);
+        cli.setConnection(connection);
+
         if (cli == null) {
             sendMessage(connection, new Message(MessageType.ERROR_AUTHORIZATION));
             ConsoleHelper.writeMessage("Client wasn't founded");
-            return;
+            return null;
         }
 
-        String mess = cli.getId() + "#" + cli.getNickname() + "#" + cli.getPassword() + "#" + cli.getEmail() + "#" +
-                cli.getGold() + "#" + cli.getCrystal();
+        String mess = cli.getId() + "#" + cli.getNickname() + "#" + cli.getPassword() + "#" + cli.getEmail() +
+                "#" + cli.getGold() + "#" + cli.getCrystal();
+
+        DatabaseHelper.setStatus(cli.getId(), true);
 
         ConsoleHelper.writeMessage("Client was founded");
         sendMessage(connection, new Message(MessageType.AUTHORIZATION, mess));
+        return cli;
     }
 
-    private static void addAccount(Connection connection, Message message) throws JsonProcessingException {
+    private static Cli addAccount(Connection connection, Message message) throws JsonProcessingException {
         String[] data = message.getData().split("#");
 
         String mail = data[0];
@@ -192,23 +196,57 @@ public class ServerMenuAndChat extends Thread {
         String nickname = data[2];
 
         try {
-            databaseHelper.addCharacter(new Cli(nickname, password, mail, 1000, 0, true));
+            DatabaseHelper.addCharacter(new Cli(nickname, password, mail, 1000, 0, true));
             ConsoleHelper.writeMessage("Client was added");
         } catch (Exception e) {
             sendMessage(connection, new Message(MessageType.ERROR_REGISTRATION));
             ConsoleHelper.writeMessage("Client wasn't added");
-            return;
+            return null;
         }
 
-        Cli cli = databaseHelper.entryCli(mail, password);
+        Cli cli = DatabaseHelper.entryCli(mail, password);
+        cli.setConnection(connection);
 
         String mess = cli.getId() + "#" + cli.getNickname() + "#" + cli.getPassword() + "#" + cli.getEmail() + "#" +
                 cli.getGold() + "#" + cli.getCrystal();
 
+        DatabaseHelper.setStatus(cli.getId(), true);
+
         sendMessage(connection, new Message(MessageType.REGISTRATION, mess));
+        return cli;
     }
 
-    private void close() {
-        databaseHelper.close();
+    private static void clientRemove(Cli client) {
+        client.close();
+        connectionList.remove(client);
+        DatabaseHelper.setStatus(client.getId(), false);
+        ConsoleHelper.writeMessage("Client " + client.getNickname() + " disconnected");
+    }
+
+    private static void clientGoGame(Cli client) {
+        gamerList.add(client);
+        checkGameList();
+        client.close();
+        connectionList.remove(client);
+        ConsoleHelper.writeMessage("Client " + client.getNickname() + " goes to game");
+    }
+
+    private static void checkGameList() {
+        while (true) {
+            int listSize = gamerList.size();
+            if (listSize > 1) {
+                int idGamerInList = rnd(listSize);
+                Cli firstGamer = gamerList.get(idGamerInList);
+                gamerList.remove(idGamerInList);
+
+                idGamerInList = rnd(--listSize);
+                Cli secondGamer = gamerList.get(idGamerInList);
+                gamerList.remove(idGamerInList);
+            }
+        }
+    }
+
+    public static int rnd(int max) {
+        return (int) (Math.random() * ++max);
     }
 }

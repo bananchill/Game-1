@@ -67,9 +67,9 @@ public class Client extends Thread {
                 serverClose();
                 return;
             }
-            if (message.getType() == MessageType.NAME_REQUEST) {
-                connection.send(new Message(MessageType.USER_NAME, "Doctor"));
-            } else if (message.getType() == MessageType.NAME_ACCEPTED) {
+            if (message.getType() == MessageType.CONNECTION_REQUEST) {
+                connection.send(new Message(MessageType.CONNECTION_ACCEPTED));
+            } else if (message.getType() == MessageType.CONNECTION_ACCEPTED) {
                 notifyConnectionStatusChanged(true);
                 client.start();
                 return;

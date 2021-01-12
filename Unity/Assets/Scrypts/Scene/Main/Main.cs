@@ -10,23 +10,21 @@ namespace Assets.Scrypts
         public InputField input;
         public Text nickname, gold, crystal;
         ClientServer client;
-        Account account;
         public GameObject authorizationMenuUI;
         Thread threadAuth;
 
         public void Start()
         {
             client = new ClientServer();
-            account = new Account();
             Debug.Log("Start app, client = " + ClientServer.online);
 
             client.StartClient();
-            if (!account.CheckCharacter())
+            if (!Account.CheckCharacter())
             {
                 authorizationMenuUI.SetActive(true);
                 threadAuth = new Thread(new ThreadStart(WaitAuth));//не работает, не понимаю как скрыть форму и заполнить поля данными
                 threadAuth.Start();
-                authorizationMenuUI.SetActive(false);
+                //authorizationMenuUI.SetActive(false);
             }
             else
             {
@@ -48,19 +46,17 @@ namespace Assets.Scrypts
                     {
                         Debug.Log("No message with character");
                     }
-                    else
+                    if(Account.character.Nickname() != null)
                     {
-                        break;
+                        nickname.text = Account.character.Nickname();
+                        gold.text = Account.character.Gold().ToString();
+                        crystal.text = Account.character.Crystal().ToString();
+                        client.StartMain();
+                        threadAuth.Abort();
                     }
                 }
                 catch (Exception) { }
-            }
-            
-            nickname.text = Account.character.Nickname();
-            gold.text = Account.character.Gold().ToString();
-            crystal.text = Account.character.Crystal().ToString();
-            client.StartMain();
-            threadAuth.Abort();
+            }            
         }
 
         public void SendMessage()
@@ -75,6 +71,13 @@ namespace Assets.Scrypts
             {
                 ConsoleHelper.WriteMessage("Произошла ошибка во время работы клиента.");
             }
+        }
+
+        public void StartGame()
+        {
+            client.SendTextMessage(new Message(MessageType.GAME));
+            GameServer gameServer = new GameServer();
+            gameServer.goGame();
         }
     }
 }

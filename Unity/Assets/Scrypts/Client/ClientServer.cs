@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Assets.Scrypts
 {
-    public class ClientServer : MonoBehaviour
+    public class ClientServer
     {
         /*
          * ошибка в отключении другого клиента, если он отключается,
@@ -81,12 +81,12 @@ namespace Assets.Scrypts
                     ServerClose();
                     return;
                 }
-                if (message.Type() == MessageType.NAME_REQUEST && count == 0)
+                if (message.Type() == MessageType.CONNECTION_REQUEST && count == 0)
                 {
-                    connection.Send(new Message(MessageType.USER_NAME, "DoctorC"));
-                    count = 1;
+                    connection.Send(new Message(MessageType.CONNECTION_ACCEPTED));
+                    count++;
                 }
-                else if (message.Type() == MessageType.NAME_ACCEPTED)
+                else if (message.Type() == MessageType.CONNECTION_ACCEPTED)
                 {
                     NotifyConnectionStatusChanged(true);
                     ConsoleHelper.WriteMessage("Соединение установлено.");
@@ -122,14 +122,6 @@ namespace Assets.Scrypts
                     if (message.Type() == MessageType.TEXT)
                     {
                         ProcessIncomingMessage(message.Data());
-                    }
-                    if (message.Type() == MessageType.AUTHORIZATION || message.Type() == MessageType.REGISTRATION)
-                    {
-                        SetAccount(message);
-                    }
-                    if (message.Type() == MessageType.ERROR_AUTHORIZATION)
-                    {
-                        Debug.Log("Error authorization");
                     }
                     online = true;
                 }

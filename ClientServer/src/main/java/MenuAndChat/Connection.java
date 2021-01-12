@@ -11,12 +11,10 @@ import java.util.Scanner;
 public class Connection implements Closeable, Serializable {
     private final Scanner scanner;
     private final PrintWriter pr;
-    private static Socket client;
 
     public Connection(Socket client) throws IOException {
         scanner = new Scanner(client.getInputStream());
         pr = new PrintWriter(client.getOutputStream(), true);
-        this.client = client;
     }
 
     public void send(Message message) {
@@ -47,10 +45,5 @@ public class Connection implements Closeable, Serializable {
     public void close() {
         scanner.close();
         pr.close();
-        try {
-            client.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

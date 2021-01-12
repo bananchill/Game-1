@@ -7,7 +7,7 @@ namespace Assets.Scrypts
     {
         public static Character character;
 
-        public bool CheckCharacter()
+        public static bool CheckCharacter()
         {
             Debug.Log("Check character");
             if (Read())
@@ -28,7 +28,7 @@ namespace Assets.Scrypts
             Debug.Log("Saved character in file");
         }
 
-        private bool Read()
+        private static bool Read()
         {
             try
             {
