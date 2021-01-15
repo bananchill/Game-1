@@ -1,0 +1,15 @@
+package Server.Message;
+
+public enum MessageType {
+    CONNECTION_REQUEST,
+    CONNECTION_ACCEPTED,
+    USER_ADDED,
+    TEXT,
+    GAME,
+    REGISTRATION,
+    AUTHORIZATION,
+    TEST_WORK,
+    ERROR,
+    ERROR_AUTHORIZATION,
+    ERROR_REGISTRATION
+}

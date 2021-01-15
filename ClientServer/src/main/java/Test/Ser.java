@@ -1,9 +1,5 @@
 package Test;
 
-import MenuAndChat.Cli;
-
-import java.sql.*;
-
 public class Ser {
     static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/game";
     static final String USER = "postgres";
