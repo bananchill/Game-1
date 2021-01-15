@@ -9,6 +9,10 @@ public class Ser {
     static final String USER = "postgres";
     static final String PASS = "pass";
 
+    public static void main(String[] args) {
+        System.out.println("Hello");
+    }
+
 //    public static void main(String[] args) {
 //        try {
 //            Class.forName("org.postgresql.Driver");
