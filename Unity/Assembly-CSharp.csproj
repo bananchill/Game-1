@@ -73,6 +73,7 @@
     <Compile Include="Assets\Scrypts\Message\Converter.cs" />
     <Compile Include="Assets\Scrypts\Message\Message.cs" />
     <Compile Include="Assets\Scrypts\Message\MessageType.cs" />
+    <Compile Include="Assets\Scrypts\Scene\FirstGame\FirstGame.cs" />
     <Compile Include="Assets\Scrypts\Scene\Main\Authorization.cs" />
     <Compile Include="Assets\Scrypts\Scene\Main\Main.cs" />
     <Reference Include="UnityEngine">

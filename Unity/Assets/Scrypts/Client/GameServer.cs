@@ -11,7 +11,7 @@ namespace Assets.Scrypts
         public static bool online = false;
         Thread receiveThread, checkThread;
 
-        public void goGame()
+        public GameServer()
         {
             checkThread = new Thread(new ThreadStart(StartCheck));
             checkThread.Start();
@@ -20,6 +20,24 @@ namespace Assets.Scrypts
                 TcpClient client = new TcpClient("localhost", 3001);
                 connection = new Connection(client);
                 ClientHandshake();
+                string data = Account.character.Mail() + "#" + Account.character.Password();
+                connection.Send(new Message(MessageType.AUTHORIZATION, data));
+                while (true)
+                {
+                    Message message = connection.Receive();
+                    if (message == null)
+                    {
+                        ServerClose();
+                        return;
+                    }
+                    if (message.Type() == MessageType.AUTHORIZATION)
+                    {
+                        NotifyConnectionStatusChanged(true);
+                        ConsoleHelper.WriteMessage("Соединение установлено.");
+                        break;
+                    }
+                    online = true;
+                }
                 StartMain();
             }
             catch (Exception)

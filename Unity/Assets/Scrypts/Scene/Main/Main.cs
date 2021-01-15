@@ -46,7 +46,7 @@ namespace Assets.Scrypts
                     {
                         Debug.Log("No message with character");
                     }
-                    if(Account.character.Nickname() != null)
+                    if (Account.character.Nickname() != null)
                     {
                         nickname.text = Account.character.Nickname();
                         gold.text = Account.character.Gold().ToString();
@@ -56,7 +56,7 @@ namespace Assets.Scrypts
                     }
                 }
                 catch (Exception) { }
-            }            
+            }
         }
 
         public void SendMessage()
@@ -76,8 +76,8 @@ namespace Assets.Scrypts
         public void StartGame()
         {
             client.SendTextMessage(new Message(MessageType.GAME));
-            GameServer gameServer = new GameServer();
-            gameServer.goGame();
+            client.checkThread.Abort();
+            new GameServer();
         }
     }
 }

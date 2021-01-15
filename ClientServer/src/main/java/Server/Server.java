@@ -115,6 +115,6 @@ public abstract class Server implements SendMessage {
         client.close();
         connectionList.remove(client);
         DatabaseHelper.setStatus(client.getId(), false);
-        ConsoleHelper.writeMessage("Client " + client.getNickname() + " disconnected from menu");
+        ConsoleHelper.writeMessage("Client " + client.getNickname() + " disconnected");
     }
 }

@@ -16,7 +16,7 @@ namespace Assets.Scrypts
         protected static Connection connection;
         public static bool clientConnected = false;
         public static bool online = false;
-        Thread receiveThread, checkThread;
+        public Thread receiveThread, checkThread;
 
         public ClientServer() { }
 
