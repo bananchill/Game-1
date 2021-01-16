@@ -20,7 +20,7 @@ namespace Assets.Scrypts
                 x = Random.Range(0, 1200);
                 z = Random.Range(0, 520);
                 typeChest = Random.Range(0, 4);
-                Chest chest = new Chest(x, z, (ChestType)typeChest, null);
+                Chest chest = new Chest((ChestType)typeChest, null, x, z);
                 if (CheckChest(chest.X(), chest.Z()))
                 {
                     listChests.Add(chest);

@@ -4,29 +4,19 @@ namespace Assets.Scrypts
 {
     public class Chest
     {
-        private float x;
-        private float z;
         private ChestType type;
         private List<Item> listItem;
+        private float x;
+        private float z;
 
         public Chest() { }
 
-        public Chest(float x, float z, ChestType type, List<Item> listItem)
+        public Chest(ChestType type, List<Item> listItem, float x, float z)
         {
-            this.x = x;
-            this.z = z;
             this.type = type;
             this.listItem = listItem;
-        }
-
-        public float X()
-        {
-            return x;
-        }
-
-        public float Z()
-        {
-            return z;
+            this.x = x;
+            this.z = z;
         }
 
         public ChestType Type()
@@ -37,6 +27,16 @@ namespace Assets.Scrypts
         public List<Item> ListItem()
         {
             return listItem;
+        }
+
+        public float X()
+        {
+            return x;
+        }
+
+        public float Z()
+        {
+            return z;
         }
     }
 }

@@ -1,13 +1,14 @@
 package Test;
 
+import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
+
 public class Ser {
     static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/game";
     static final String USER = "postgres";
     static final String PASS = "pass";
-
-    public static void main(String[] args) {
-        System.out.println("Hello");
-    }
 
 //    public static void main(String[] args) {
 //        try {
