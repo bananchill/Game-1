@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
 using System;
-using System.Net.Sockets;
-using System.Threading;
 
 namespace Assets.Scrypts
 {
-    public class ClientServer
+    public class ClientServer : Client, SendMessage
     {
         /*
          * ошибка в отключении другого клиента, если он отключается,
@@ -13,105 +11,9 @@ namespace Assets.Scrypts
          * после чего данный клиент думает, что сервер упал
          */
 
-        protected static Connection connection;
-        public static bool clientConnected = false;
-        public static bool online = false;
-        public Thread receiveThread, checkThread;
-
         public ClientServer() { }
 
-        public void StartClient()
-        {
-            checkThread = new Thread(new ThreadStart(StartCheck));
-            checkThread.Start();
-            try
-            {
-                TcpClient client = new TcpClient("localhost", 3000);
-                connection = new Connection(client);
-                ClientHandshake();
-            }
-            catch (Exception)
-            {
-                NotifyConnectionStatusChanged(false);
-            }
-        }
-
-        public void StartMain()
-        {
-            receiveThread = new Thread(ClientMainLoop);
-            receiveThread.Start();
-        }
-
-        private void StopMain()
-        {
-            receiveThread.Abort();
-        }
-
-        private void StartCheck()
-        {
-            while (true)
-            {
-                try
-                {
-                    if (!online)
-                    {
-                        Thread.Sleep(30000);
-                        if (!online)
-                        {
-                            ServerClose();
-                            return;
-                        }
-                    }
-                    connection.Send(new Message(MessageType.TEST_WORK));
-                    online = false;
-                }
-                catch (Exception) { }
-                Thread.Sleep(30000);
-            }
-        }
-
-        public void ClientHandshake()
-        {
-            int count = 0;
-            while (true)
-            {
-                Message message = connection.Receive();
-                if (message == null)
-                {
-                    ServerClose();
-                    return;
-                }
-                if (message.Type() == MessageType.CONNECTION_REQUEST && count == 0)
-                {
-                    connection.Send(new Message(MessageType.CONNECTION_ACCEPTED));
-                    count++;
-                }
-                else if (message.Type() == MessageType.CONNECTION_ACCEPTED)
-                {
-                    NotifyConnectionStatusChanged(true);
-                    ConsoleHelper.WriteMessage("Соединение установлено.");
-                    return;
-                }
-                online = true;
-            }
-        }
-
-        public void SendTextMessage(Message message)
-        {
-            try
-            {
-                StopMain();
-                connection.Send(message);
-                StartMain();
-            }
-            catch (Exception e)
-            {
-                ConsoleHelper.WriteMessage("Ошибка отправки " + e);
-                clientConnected = false;
-            }
-        }
-
-        public void ClientMainLoop()
+        public override void ClientMainLoop()
         {
             while (true)
             {
@@ -121,7 +23,7 @@ namespace Assets.Scrypts
                 {
                     if (message.Type() == MessageType.TEXT)
                     {
-                        ProcessIncomingMessage(message.Data());
+                        Debug.Log(message.data);
                     }
                     online = true;
                 }
@@ -131,22 +33,6 @@ namespace Assets.Scrypts
                     return;
                 }
             }
-        }
-
-        private void ServerClose()
-        {
-            connection.Close();
-            ConsoleHelper.WriteMessage("Error happened, server disconnected");
-        }
-
-        protected void ProcessIncomingMessage(string message)
-        {
-            Debug.Log(message);
-        }
-
-        public void NotifyConnectionStatusChanged(bool clientConnected)
-        {
-            ClientServer.clientConnected = clientConnected;
         }
 
         public static void SetAccount(Message message)

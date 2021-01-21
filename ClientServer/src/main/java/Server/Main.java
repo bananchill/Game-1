@@ -7,14 +7,28 @@ import Server.MainServer.MainServer;
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         DatabaseHelper.connectDatabase();
 
         Server mainServer = new MainServer();
-        mainServer.start(3000);
+        Thread threadStartMainServer = new Thread(() -> {
+            try {
+                mainServer.start(3000);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        threadStartMainServer.start();
 
         GameServer gameServer = new GameServer();
-        gameServer.start(3001);
+        Thread threadStartGameServer = new Thread(() -> {
+            try {
+                gameServer.start(3001);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        threadStartGameServer.start();
 
         Thread threadCreateAPairOfPlayers = new Thread(() -> gameServer.createAPairOfPlayers());
         threadCreateAPairOfPlayers.start();

@@ -15,25 +15,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameServer extends Server {
-    public static List<Client> gamerList = new ArrayList<>();
-    public static List<Client> potentialPlayersList = new ArrayList<>();
+    public static ArrayList<Client> gamerList = new ArrayList<>();
+    public static ArrayList<Client> potentialPlayersList = new ArrayList<>();
 
     @Override
     public void startHandler(Socket socket) {
         Client client;
         try (Connection connection = new Connection(socket)) {
-            ConsoleHelper.writeMessage("Установлено новое соединение с удаленным адресом " + socket.getRemoteSocketAddress());
+            ConsoleHelper.writeMessage("Установлено новое соединение с удаленным адресом " + socket.getRemoteSocketAddress() + " на игру");
             client = serverHandshake(connection);
 
             while (true) {
                 Message message = connection.receive();
                 if (message != null) {
                     if (message.getType() == MessageType.AUTHORIZATION) {
-                        ConsoleHelper.writeMessage("Client want to authorization");
+                        ConsoleHelper.writeMessage("Client want to authorization in the game");
                         if (checkAccount(connection, message)) {
                             client.setConnection(connection);
+                            break;
                         }
-                        break;
+                        else {
+                            clientRemove(client);
+                            return;
+                        }
                     }
                 } else {
                     clientRemove(client);
@@ -87,34 +91,56 @@ public class GameServer extends Server {
         }
     }
 
+//    public void createAPairOfPlayers() {
+//        while (true) {
+//            int listSize = gamerList.size();
+//            if (listSize > 1) {
+//                int idGamerInList = rnd(0, listSize);
+//                Client firstGamer = gamerList.get(idGamerInList);
+//                gamerList.remove(idGamerInList);
+//
+//                idGamerInList = rnd(0, --listSize);
+//                Client secondGamer = gamerList.get(idGamerInList);
+//
+//                gamerList.remove(idGamerInList);
+//
+//                GameServer.gamerList.add(firstGamer);
+//                GameServer.gamerList.add(secondGamer);
+//
+//                GameProgress gameProgress = new GameProgress(firstGamer, secondGamer);
+//            }
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
     public void createAPairOfPlayers() {
         while (true) {
             int listSize = gamerList.size();
-            if (listSize > 1) {
-                int idGamerInList = rnd(listSize);
-                Client firstGamer = gamerList.get(idGamerInList);
-                gamerList.remove(idGamerInList);
+            System.out.println(121212);
+            if (listSize > 0) {
+//                int idGamerInList = rnd(0, listSize - 1);
+//                Client firstGamer = gamerList.get(idGamerInList);
+                System.out.println(listSize);
+//                gamerList.remove(firstGamer);
+//
+//                GameServer.gamerList.add(firstGamer);
 
-                idGamerInList = rnd(--listSize);
-                Client secondGamer = gamerList.get(idGamerInList);
-
-                gamerList.remove(idGamerInList);
-
-                GameServer.gamerList.add(firstGamer);
-                GameServer.gamerList.add(secondGamer);
-
-                GameProgress gameProgress = new GameProgress(firstGamer, secondGamer);
+                //new GameProgress(firstGamer, null);
+                continue;
+            }
+            else {
+                System.out.println(listSize);
             }
             try {
-                Thread.sleep(500);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static int rnd(int max) {
-        return (int) (Math.random() * ++max);
     }
 
     public static int rnd(int min, int max) {

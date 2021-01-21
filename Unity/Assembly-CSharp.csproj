@@ -61,13 +61,14 @@
     <Compile Include="Assets\Scrypts\Character.cs" />
     <Compile Include="Assets\Scrypts\Chest\Chest.cs" />
     <Compile Include="Assets\Scrypts\Chest\ChestType.cs" />
+    <Compile Include="Assets\Scrypts\Client.cs" />
     <Compile Include="Assets\Scrypts\Client\ClientServer.cs" />
-    <Compile Include="Assets\Scrypts\Client\Connection.cs" />
     <Compile Include="Assets\Scrypts\Client\GameServer.cs" />
+    <Compile Include="Assets\Scrypts\Connection.cs" />
     <Compile Include="Assets\Scrypts\ConsoleHelper.cs" />
     <Compile Include="Assets\Scrypts\GameFirst\Camera.cs" />
-    <Compile Include="Assets\Scrypts\GameFirst\Game.cs" />
-    <Compile Include="Assets\Scrypts\GameFirst\MoveCharacter.cs" />
+    <Compile Include="Assets\Scrypts\GameFirst\CharacterGame.cs" />
+    <Compile Include="Assets\Scrypts\Interfaces\SendMessage.cs" />
     <Compile Include="Assets\Scrypts\Item\Item.cs" />
     <Compile Include="Assets\Scrypts\Item\ItemType.cs" />
     <Compile Include="Assets\Scrypts\Message\Converter.cs" />

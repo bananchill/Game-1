@@ -46,6 +46,6 @@ public class Message implements Serializable {
     }
 
     public void setXml() throws JsonProcessingException {
-        this.xml = Converter.messageToXml(this);
+        this.xml = Converter.objectToXml(this);
     }
 }

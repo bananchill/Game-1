@@ -2,6 +2,7 @@
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Scrypts
 {
@@ -9,16 +10,16 @@ namespace Assets.Scrypts
     {
         public InputField input;
         public Text nickname, gold, crystal;
-        ClientServer client;
         public GameObject authorizationMenuUI;
         Thread threadAuth;
+        ClientServer client;
 
         public void Start()
         {
             client = new ClientServer();
-            Debug.Log("Start app, client = " + ClientServer.online);
+            Debug.Log("Start app, client = " + Client.online);
 
-            client.StartClient();
+            client.StartClient("localhost", 3000);
             if (!Account.CheckCharacter())
             {
                 authorizationMenuUI.SetActive(true);
@@ -61,7 +62,7 @@ namespace Assets.Scrypts
 
         public void SendMessage()
         {
-            if (ClientServer.clientConnected)
+            if (Client.clientConnected)
             {
                 string message;
                 message = input.text;
@@ -77,7 +78,7 @@ namespace Assets.Scrypts
         {
             client.SendTextMessage(new Message(MessageType.GAME));
             client.checkThread.Abort();
-            new GameServer();
+            SceneManager.LoadScene("FirstGame");
         }
     }
 }

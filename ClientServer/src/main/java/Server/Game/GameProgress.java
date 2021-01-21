@@ -1,47 +1,187 @@
 package Server.Game;
 
 import Server.Client.Client;
+import Server.ConsoleHelper;
 import Server.Game.Chest.Chest;
+import Server.Game.Chest.ChestType;
+import Server.Game.Enemy.AcolyteEnemy;
+import Server.Game.Enemy.EnemyBot;
+import Server.Game.Enemy.EnemyType;
+import Server.Game.Item.Item;
+import Server.Game.Item.ItemType;
 import Server.Game.Server.GameServer;
+import Server.Message.Message;
+import Server.Message.MessageType;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameProgress extends GameServer {
-    public static List<Chest> listChests;
+    public List<Chest> listChests;
+    public List<EnemyBot> listEnemy;
+    private Client firstGamer;
+    private Client secondGamer;
 
     public GameProgress(Client firstGamer, Client secondGamer) {
+        this.firstGamer = firstGamer;
+        this.secondGamer = secondGamer;
         loadingGame();
     }
 
     private void loadingGame() {
         listChests = new ArrayList<>();
-        float x;
-        float z;
+        listEnemy = new ArrayList<>();
+
+        sendInfo(MessageType.LOADING_GAME, null);
+
+        createChests();
+        //createEnemy();
+
+        sendInfo(MessageType.SET_INFO, null);
+    }
+
+    private void createEnemy() {
+        float x, z;
+        int typeEnemy;
+        EnemyBot enemy = null;
+
+        for (int i = 0; i < 10; ) {
+            x = rnd(0, 1200);
+            z = rnd(0, 520);
+            typeEnemy = rnd(0, 3);
+
+            if (checkChest(x, z) && checkEnemy(x, z)) {
+                switch (typeEnemy) {
+                    case 0:
+                        enemy = new AcolyteEnemy(EnemyType.ACOLYTE, rnd(10, 20), rnd(1, 3), x, z);
+                        break;
+                    case 1:
+                        listEnemy.add(new AcolyteEnemy(EnemyType.WARRIOR, rnd(20, 35), rnd(5, 10), x, z));
+                        break;
+                    case 3:
+                        listEnemy.add(new AcolyteEnemy(EnemyType.HEADMAN, rnd(50, 70), rnd(25, 50), x, z));
+                        break;
+                }
+                listEnemy.add(enemy);
+                i++;
+            }
+        }
+    }
+
+    private boolean checkEnemy(float x, float z) {
+        for (EnemyBot elem : listEnemy) {
+            if (elem.getX() >= x) {
+                if (elem.getX() - x <= 30) {
+                    if (elem.getZ() >= z) {
+                        if (elem.getZ() - z <= 30) return false;
+                    } else {
+                        if (z - elem.getZ() <= 30) return false;
+                    }
+                }
+            } else {
+                if (x - elem.getX() <= 30) {
+                    if (elem.getZ() >= z) {
+                        if (elem.getZ() - z <= 30) return false;
+                    } else {
+                        if (z - elem.getZ() <= 30) return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private void createChests() {
+        List<Item> listItems = new ArrayList<>();
+        int x, z;
         int typeChest;
 
-//        for (int i = 0; i < 5;)
-//        {
-//            x = rnd(1200);
-//            z = rnd(520);
-//            typeChest = rnd(4);
-//            ChestType type;
-//            switch (typeChest) {
-//                case 0: type
-//                case 1:
-//                case 3:
-//                case 4:
-//            }
-//
-//            Chest chest = new Chest(x, z, ChestType.COMMON, null);
-//
-//            if (CheckChest(chest.X(), chest.Z()))
-//            {
-//                listChests.Add(chest);
-//                var o = Instantiate(obj, new Vector3(x, 0, z), Quaternion.identity);
-//                o.transform.localScale = new Vector2(3f, 3f);
-//                i++;
-//            }
-//        }
+        for (int i = 0; i < 5; ) {
+            x = rnd(0, 1200);
+            z = rnd(0, 520);
+            typeChest = rnd(0, 4);
+
+            ChestType type = null;
+
+            if (checkChest(x, z)) {
+                switch (typeChest) {
+                    case 0:
+                        type = ChestType.COMMON;
+                        listItems = createListItem(ChestType.COMMON);
+                        break;
+                    case 1:
+                        type = ChestType.RARE;
+                        listItems = createListItem(ChestType.RARE);
+                        break;
+                    case 3:
+                        type = ChestType.EPIC;
+                        listItems = createListItem(ChestType.EPIC);
+                        break;
+                    case 4:
+                        type = ChestType.ENCHANTED;
+                        listItems = createListItem(ChestType.ENCHANTED);
+                        break;
+                }
+
+                Chest chest = new Chest(type, listItems, x, z);
+
+                listChests.add(chest);
+                i++;
+            }
+        }
+    }
+
+    private List<Item> createListItem(ChestType type) {
+        List<Item> listItems = new ArrayList<>();
+        int countItems = rnd(1, 3);
+
+        for (int i = 0; i < countItems; i++) {
+            int typeItem = rnd(0, 1);
+            switch (typeItem) {
+                case 0:
+                    type = ChestType.COMMON;
+                    listItems.add(new Item(ItemType.SHIELD, rnd(0, 2), rnd(0, 4), rnd(0, 5)));
+                    break;
+                case 1:
+                    type = ChestType.RARE;
+                    listItems.add(new Item(ItemType.SWORD, rnd(0, 20),rnd(0, 40), rnd(0, 1000)));
+                    break;
+            }
+        }
+        return listItems;
+    }
+
+    private boolean checkChest(float x, float z) {
+        for (Chest elem : listChests) {
+            if (elem.getX() >= x) {
+                if (elem.getX() - x <= 30) {
+                    if (elem.getZ() >= z) {
+                        if (elem.getZ() - z <= 30) return false;
+                    } else {
+                        if (z - elem.getZ() <= 30) return false;
+                    }
+                }
+            } else {
+                if (x - elem.getX() <= 30) {
+                    if (elem.getZ() >= z) {
+                        if (elem.getZ() - z <= 30) return false;
+                    } else {
+                        if (z - elem.getZ() <= 30) return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private void sendInfo(MessageType type, String message) {
+        try {
+            System.out.println("send mess 1231321");
+            sendMessage(firstGamer.getConnection(), new Message(type, message));
+            //sendMessage(secondGamer.getConnection(), new Message(type, message));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }

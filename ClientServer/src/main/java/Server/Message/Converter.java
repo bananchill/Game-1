@@ -5,15 +5,15 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class Converter {
 
-    public static String messageToXml(Message message) throws JsonProcessingException {//don't use!!!
+    public static String objectToXml(Object object) throws JsonProcessingException {
         XmlMapper xmlMapper = new XmlMapper();
-        String xml = xmlMapper.writeValueAsString(message);
+        String xml = xmlMapper.writeValueAsString(object);
         return xml;
     }
 
-    public static Message xmlToMessage(String xml) throws JsonProcessingException {
+    public static Object xmlToObject(String xml, Object obj) throws JsonProcessingException {
         XmlMapper xmlMapper = new XmlMapper();
-        Message value = xmlMapper.readValue(xml, Message.class);
-        return value;
+        Object m = xmlMapper.readValue(xml, obj.getClass());
+        return m;
     }
 }

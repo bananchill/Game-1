@@ -1,6 +1,6 @@
 package Server.Game.Item;
 
-enum ItemType {
+public enum ItemType {
     SWORD,
     SHIELD
 }

@@ -1,4 +1,8 @@
-﻿namespace Assets.Scrypts
+﻿using System;
+using System.IO;
+using System.Xml.Serialization;
+
+namespace Assets.Scrypts
 {
     public class Converter
     {
@@ -26,6 +30,17 @@
             string xml = "<Message><type>" + type.ToString() + "</type><id>" + id + "</id><nickname>" + nickname + "</nickname>" +
                 "<password>" + password + "</password><mail>" + mail + "</mail><gold>" + gold + "</gold><crystal>" + crystal + "</crystal></Message>";
             return xml;
+        }
+
+        public static Message XmlToObject(string s)
+        {
+            Message message;
+            var serializer = new XmlSerializer(typeof(Message));
+            using (var xmlStream = new StringReader(s))
+            {
+                message = (Message)serializer.Deserialize(xmlStream);
+            }
+            return message;
         }
     }
 }

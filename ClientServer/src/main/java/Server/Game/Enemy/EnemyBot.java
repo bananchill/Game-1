@@ -5,17 +5,17 @@ public abstract class EnemyBot {
     private int health;
     private int damage;
     private float x;
-    private float y;
+    private float z;
 
     public EnemyBot() {
     }
 
-    public EnemyBot(EnemyType type, int health, int damage, float x, float y) {
+    public EnemyBot(EnemyType type, int health, int damage, float x, float z) {
         this.type = type;
         this.health = health;
         this.damage = damage;
         this.x = x;
-        this.y = y;
+        this.z = z;
     }
 
     public EnemyType getType() {
@@ -38,12 +38,12 @@ public abstract class EnemyBot {
         this.x = x;
     }
 
-    public float getY() {
-        return y;
+    public float getZ() {
+        return z;
     }
 
-    public void setY(float y) {
-        this.y = y;
+    public void setZ(float z) {
+        this.z = z;
     }
 
     public abstract void attack();

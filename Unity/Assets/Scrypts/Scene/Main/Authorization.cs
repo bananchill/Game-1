@@ -23,7 +23,7 @@ namespace Assets.Scrypts
             character = new Character(mail.text, password.text);
             Account.Save(character);
             ClientServer.Entry(character);
-            Debug.Log(ClientServer.clientConnected + " status client");
+            Debug.Log(Client.clientConnected + " status client");
         }
     }
 }

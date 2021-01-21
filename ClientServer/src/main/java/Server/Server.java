@@ -37,7 +37,6 @@ public abstract class Server implements SendMessage {
                 Socket finalSocket = socket;
                 Thread threadHandler = new Thread(() -> startHandler(finalSocket));
                 threadHandler.start();
-                ConsoleHelper.writeMessage("Add Socket");
             }
         }
     }
@@ -115,6 +114,6 @@ public abstract class Server implements SendMessage {
         client.close();
         connectionList.remove(client);
         DatabaseHelper.setStatus(client.getId(), false);
-        ConsoleHelper.writeMessage("Client " + client.getNickname() + " disconnected");
+        ConsoleHelper.writeMessage("Client " + client.getConnection() + " disconnected");
     }
 }

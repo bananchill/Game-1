@@ -1,6 +1,6 @@
 package Server.Game.Chest;
 
-enum ChestType {
+public enum ChestType {
     COMMON,
     RARE,
     EPIC,

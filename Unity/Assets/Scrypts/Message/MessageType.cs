@@ -14,6 +14,8 @@
         ERROR,
         ERROR_AUTHORIZATION,
         ERROR_REGISTRATION,
-        GAME
+        GAME,
+        LOADING_GAME,
+        SET_INFO
     }
 }

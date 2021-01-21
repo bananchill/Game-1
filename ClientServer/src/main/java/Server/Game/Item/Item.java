@@ -1,9 +1,16 @@
 package Server.Game.Item;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
 public class Item {
+
+    @JacksonXmlProperty(localName = "itemType")
     private ItemType type;
+    @JacksonXmlProperty(localName = "damage")
     private int damage;
+    @JacksonXmlProperty(localName = "armor")
     private int armor;
+    @JacksonXmlProperty(localName = "health")
     private int health;
 
     public Item() {

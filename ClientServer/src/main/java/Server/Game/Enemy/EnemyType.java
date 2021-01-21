@@ -1,6 +1,6 @@
 package Server.Game.Enemy;
 
-enum EnemyType {
+public enum EnemyType {
     ACOLYTE,
     WARRIOR,
     HEADMAN

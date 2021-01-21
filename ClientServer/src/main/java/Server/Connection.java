@@ -31,7 +31,7 @@ public class Connection implements Closeable, Serializable {
             try {
                 s = scanner.nextLine();
                 if (s != null) {
-                    message = Converter.xmlToMessage(s);
+                    message = (Message)Converter.xmlToObject(s, new Message());
                     return message;
                 } else {
                     return null;
