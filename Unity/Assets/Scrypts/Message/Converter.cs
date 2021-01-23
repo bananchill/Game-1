@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Xml.Serialization;
 
 namespace Assets.Scrypts
@@ -12,24 +11,18 @@ namespace Assets.Scrypts
             return xml;
         }
 
-        public static string StrignToXml(MessageType type, string identifier, string password)
+        public static string CharacterToXml(Character account)
         {
-            string xml = "<Message><type>" + type.ToString() + "</type><identifier>" + identifier + "</identifier><password>" + password + "</password></Message>";
-            return xml;
-        }
-
-        public static string StrignToXml(MessageType type, string identifier, string password, string mail)
-        {
-            string xml = "<Message><type>" + type.ToString() + "</type><identifier>" + identifier + "</identifier><password>" + password + "</password>" +
-                "<mail>" + mail + "</mail></Message>";
-            return xml;
-        }
-
-        public static string StrignToXml(MessageType type, string id, string nickname, string password, string mail, string gold, string crystal)
-        {
-            string xml = "<Message><type>" + type.ToString() + "</type><id>" + id + "</id><nickname>" + nickname + "</nickname>" +
-                "<password>" + password + "</password><mail>" + mail + "</mail><gold>" + gold + "</gold><crystal>" + crystal + "</crystal></Message>";
-            return xml;
+            string serializeCharacter =
+                $"<character>" +
+                $"<id>{account.Id()}</id>" +
+                $"<nickname>{account.Nickname()}</nickname>" +
+                $"<password>{account.Password()}</password>" +
+                $"<mail>{account.Mail()}</mail>" +
+                $"<gold>{account.Gold()}</gold>" +
+                $"<crystal>{account.Crystal()}</crystal>" +
+                $"</character>";
+            return serializeCharacter;
         }
 
         public static Message XmlToObject(string s)
@@ -39,6 +32,17 @@ namespace Assets.Scrypts
             using (var xmlStream = new StringReader(s))
             {
                 message = (Message)serializer.Deserialize(xmlStream);
+            }
+            return message;
+        }
+
+        public static Chest XmlToChest(string s)
+        {
+            Chest message;
+            var serializer = new XmlSerializer(typeof(Chest));
+            using (var xmlStream = new StringReader(s))
+            {
+                message = (Chest)serializer.Deserialize(xmlStream);
             }
             return message;
         }

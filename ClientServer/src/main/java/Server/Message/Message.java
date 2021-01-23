@@ -14,7 +14,7 @@ public class Message implements Serializable {
 
     @JacksonXmlProperty(localName = "type")
     private MessageType type;
-    @JacksonXmlProperty(localName = "data")
+    //@JacksonXmlProperty(localName = "data")
     private String data;
     @JsonIgnore
     private String xml;

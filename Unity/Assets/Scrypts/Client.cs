@@ -37,7 +37,7 @@ namespace Assets.Scrypts
                 {
                     if (!online)
                     {
-                        Thread.Sleep(30000);
+                        Thread.Sleep(5000);
                         if (!online)
                         {
                             ServerClose();

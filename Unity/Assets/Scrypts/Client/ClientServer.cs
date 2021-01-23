@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 
 namespace Assets.Scrypts
 {
@@ -71,6 +70,7 @@ namespace Assets.Scrypts
         public static void Entry(Character character)
         {
             string data = character.Mail() + "#" + character.Password();
+            //string data1 = character.Mail() + "#" + character.Password() + "#" + Converter.CharacterToXml(character);
             connection.Send(new Message(MessageType.AUTHORIZATION, data));
             while (true)
             {

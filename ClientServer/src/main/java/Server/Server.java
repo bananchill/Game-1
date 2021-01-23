@@ -3,6 +3,7 @@ package Server;
 import Server.Client.Client;
 import Server.Database.DatabaseHelper;
 import Server.Interfaces.SendMessage;
+import Server.Message.Converter;
 import Server.Message.Message;
 import Server.Message.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,6 +60,7 @@ public abstract class Server implements SendMessage {
 
     public Client getAccount(Connection connection, Message message) throws JsonProcessingException {
         String[] data = message.getData().split("#");
+        //Client cl = (Client)Converter.xmlToObject(message.getData(), new Client());
         String mail, password;
         try {
             mail = data[0];
@@ -69,13 +71,13 @@ public abstract class Server implements SendMessage {
             return null;
         }
         Client client = DatabaseHelper.entryCli(mail, password);
-        client.setConnection(connection);
 
         if (client == null) {
             sendMessage(connection, new Message(MessageType.ERROR_AUTHORIZATION));
             ConsoleHelper.writeMessage("Client wasn't founded");
             return null;
         }
+        client.setConnection(connection);
 
         String mess = client.getId() + "#" + client.getNickname() + "#" + client.getPassword() + "#" + client.getEmail() +
                 "#" + client.getGold() + "#" + client.getCrystal();
@@ -93,11 +95,13 @@ public abstract class Server implements SendMessage {
                 try {
                     client.getConnection().send(new Message(MessageType.TEST_WORK));
                     if (!client.isOnline()) {
-                        Thread.sleep(30000);
+                        Thread.sleep(5000);
                         if (!!client.isOnline()) {
                             clientRemove(client);
+                            System.out.println("check close");
                         }
                     }
+                    continue;
                 } catch (JsonProcessingException | InterruptedException e) {
                     e.printStackTrace();
                 }

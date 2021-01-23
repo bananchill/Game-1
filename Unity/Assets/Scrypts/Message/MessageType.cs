@@ -16,6 +16,9 @@
         ERROR_REGISTRATION,
         GAME,
         LOADING_GAME,
-        SET_INFO
+        SET_INFO,
+        SET_CHEST,
+        SET_ENEMY,
+        SET_END
     }
 }

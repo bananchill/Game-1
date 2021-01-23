@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEngine;
 
 namespace Assets.Scrypts
@@ -6,39 +7,29 @@ namespace Assets.Scrypts
     class GameServer : Client, SendMessage
     {
         bool loagingGame = false;
-        public GameServer()
+
+        public GameServer() { }
+
+        public void ConnectToServer()
         {
-            try
+            string data = Account.character.Mail() + "#" + Account.character.Password();
+            connection.Send(new Message(MessageType.AUTHORIZATION, data));
+
+            while (true)
             {
-                Debug.Log("Start app, client = " + online);
-                StartClient("localhost", 3001);
-
-                Debug.Log("send");
-                string data = Account.character.Mail() + "#" + Account.character.Password();
-                connection.Send(new Message(MessageType.AUTHORIZATION, data));
-                Debug.Log("send1");
-
-                while (true)
+                Message message = connection.Receive();
+                if (message == null)
                 {
-                    Message message = connection.Receive();
-                    if (message == null)
-                    {
-                        ServerClose();
-                        return;
-                    }
-                    if (message.Type() == MessageType.AUTHORIZATION)
-                    {
-                        NotifyConnectionStatusChanged(true);
-                        ConsoleHelper.WriteMessage("Соединение установлено.");
-                        break;
-                    }
-                    online = true;
+                    ServerClose();
+                    return;
                 }
-                StartMain();
-            }
-            catch (Exception)
-            {
-                NotifyConnectionStatusChanged(false);
+                if (message.Type() == MessageType.AUTHORIZATION)
+                {
+                    NotifyConnectionStatusChanged(true);
+                    ConsoleHelper.WriteMessage("Account accept.");
+                    break;
+                }
+                online = true;
             }
         }
 
@@ -53,11 +44,31 @@ namespace Assets.Scrypts
                     if (message.Type() == MessageType.LOADING_GAME && !loagingGame)
                     {
                         FirstGame.WaitTheGame();
+                        message = connection.Receive();
                         loagingGame = true;
                     }
                     if (message.Type() == MessageType.SET_INFO)
                     {
-                        FirstGame.SetInfo(message);
+                        while (true)
+                        {
+                            message = connection.Receive();
+                            if (message != null)
+                            {
+                                if (message.Type() == MessageType.SET_CHEST)
+                                {
+                                    Chest chest = Converter.XmlToChest(message.data);
+                                    CharacterGame.listChests.Add(chest);
+                                }
+                                if (message.Type() == MessageType.SET_ENEMY)
+                                {
+                                }
+                                if (message.Type() == MessageType.SET_END)
+                                {
+
+                                    break;
+                                }
+                            }
+                        }
                     }
                     online = true;
                 }

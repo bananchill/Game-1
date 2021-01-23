@@ -13,7 +13,6 @@ public class Client {
     private int crystal;
 
     public Client() {
-
     }
 
     public Client(Connection connection) {

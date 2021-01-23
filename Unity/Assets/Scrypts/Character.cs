@@ -5,20 +5,16 @@ namespace Assets.Scrypts
     [Serializable]
     public class Character
     {
-        [NonSerialized]
         private int id;
 
-        [NonSerialized]
         private string nickname;
 
         private string mail;
 
         private string password;
 
-        [NonSerialized]
         private int gold;
 
-        [NonSerialized]
         private int crystal;
 
         public Character() { }
@@ -27,6 +23,10 @@ namespace Assets.Scrypts
         {
             this.mail = mail;
             this.password = password;
+            id = -1;
+            nickname = null;
+            gold = -1;
+            crystal = -1;
         }
 
         public Character(string mail, string password, string nickname)
@@ -34,6 +34,9 @@ namespace Assets.Scrypts
             this.mail = mail;
             this.nickname = nickname;
             this.password = password;
+            id = -1;
+            gold = -1;
+            crystal = -1;
         }
 
         public Character(int id, string nickname, string password, string mail, int gold, int crystal)

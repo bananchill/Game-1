@@ -13,5 +13,8 @@ public enum MessageType {
     ERROR,
     ERROR_AUTHORIZATION,
     ERROR_REGISTRATION,
-    SET_INFO
+    SET_INFO,
+    SET_CHEST,
+    SET_ENEMY,
+    SET_END
 }

@@ -4,19 +4,18 @@ import Server.Game.Chest.Chest;
 import Server.Game.GameProgress;
 import Server.Message.Converter;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Ser {
     public static void main(String[] args) throws IOException {
-        GameProgress g = new GameProgress(null, null);
+        ServerSocket s = new ServerSocket(6777);
+        Socket sr = s.accept();
+        FileInputStream fr = new FileInputStream("D:");
+        byte b[] = new byte[2002];
 
-        for(int i = 0; i < g.listChests.size(); i++) {
-            String s = Converter.objectToXml(g.listChests.get(i));
-            System.out.println(s);
-            Chest c = (Chest)Converter.xmlToObject(s, new Chest());
-            System.out.println(c.getListItem().get(0).getType());
-            System.out.println(c.getListItem().get(1).getType());
-            System.out.println("end");
-        }
+        Test.main();
     }
 }

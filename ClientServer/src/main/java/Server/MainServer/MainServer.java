@@ -29,6 +29,9 @@ public class MainServer extends Server implements SendBroadcast {
                     if (message.getType() == MessageType.AUTHORIZATION) {
                         ConsoleHelper.writeMessage("Client want to authorization");
                         client = getAccount(connection, message);
+                        if (client == null) {
+                            return;
+                        }
                         break;
                     } else if (message.getType() == MessageType.REGISTRATION) {
                         ConsoleHelper.writeMessage("Client want to registration");
@@ -50,22 +53,27 @@ public class MainServer extends Server implements SendBroadcast {
     @Override
     public void serverMainLoop(Client client) throws IOException {
         while (true) {
-            Message message = client.getConnection().receive();
-            if (message != null) {
-                if (message.getType() == MessageType.TEXT) {
-                    String s = client.getNickname() + ": " + message.getData();
-                    Message formattedMessage = new Message(MessageType.TEXT, s);
-                    sendBroadcastMessage(formattedMessage);
-                } else if (message.getType() == MessageType.TEST_WORK) {
-                    client.setOnline(true);
-                } else if (message.getType() == MessageType.GAME) {
-                    clientGoGame(client);
+            try {
+                Message message = client.getConnection().receive();
+                if (message != null) {
+                    if (message.getType() == MessageType.TEXT) {
+                        String s = client.getNickname() + ": " + message.getData();
+                        Message formattedMessage = new Message(MessageType.TEXT, s);
+                        sendBroadcastMessage(formattedMessage);
+                    } else if (message.getType() == MessageType.TEST_WORK) {
+                        client.setOnline(true);
+                    } else if (message.getType() == MessageType.GAME) {
+                        clientGoGame(client);
+                    } else {
+                        ConsoleHelper.writeMessage("Error type " + message.getType() + " " + message.getData());
+                    }
                 } else {
-                    ConsoleHelper.writeMessage("Error type " + message.getType() + " " + message.getData());
+                    clientRemove(client);
+                    System.out.println("main lobby close");
+                    return;
                 }
-            } else {
-                clientRemove(client);
-                return;
+            } catch (NullPointerException e) {
+                break;
             }
         }
     }
@@ -100,6 +108,7 @@ public class MainServer extends Server implements SendBroadcast {
 
     private void clientGoGame(Client client) {
         connectionList.remove(client);
+        client.setConnection(null);
         GameServer.potentialPlayersList.add(client);
         ConsoleHelper.writeMessage("Client " + client.getNickname() + " goes to game");
     }

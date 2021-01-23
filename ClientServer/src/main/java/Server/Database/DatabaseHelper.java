@@ -7,7 +7,7 @@ import java.sql.*;
 public class DatabaseHelper {
     private static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/game";
     private static final String USER = "postgres";
-    private static final String PASS = "pass";
+    private static final String PASS = "password";
     private static Connection connection;
     private static Statement statement = null;
 
@@ -100,6 +100,9 @@ public class DatabaseHelper {
             }
         } catch (SQLException e) {
             System.out.println("Ошибка sql запроса");
+        } catch (NullPointerException e) {
+            System.out.println("Client not founded");
+            return null;
         }
         return client;
     }

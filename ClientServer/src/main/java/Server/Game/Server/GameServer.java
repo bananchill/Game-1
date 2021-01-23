@@ -31,7 +31,7 @@ public class GameServer extends Server {
                     if (message.getType() == MessageType.AUTHORIZATION) {
                         ConsoleHelper.writeMessage("Client want to authorization in the game");
                         if (checkAccount(connection, message)) {
-                            client.setConnection(connection);
+                            sendMessage(client.getConnection(), new Message(MessageType.AUTHORIZATION));
                             break;
                         }
                         else {
@@ -67,6 +67,7 @@ public class GameServer extends Server {
 
             if (client.getEmail().equals(mail) && client.getPassword().equals(password)) {
                 potentialPlayersList.remove(client);
+                client.setConnection(connection);
                 gamerList.add(client);
                 return true;
             }
@@ -86,57 +87,29 @@ public class GameServer extends Server {
                 }
             } else {
                 clientRemove(client);
+                System.out.println("main in game close");
                 return;
             }
         }
     }
 
-//    public void createAPairOfPlayers() {
-//        while (true) {
-//            int listSize = gamerList.size();
-//            if (listSize > 1) {
-//                int idGamerInList = rnd(0, listSize);
-//                Client firstGamer = gamerList.get(idGamerInList);
-//                gamerList.remove(idGamerInList);
-//
-//                idGamerInList = rnd(0, --listSize);
-//                Client secondGamer = gamerList.get(idGamerInList);
-//
-//                gamerList.remove(idGamerInList);
-//
-//                GameServer.gamerList.add(firstGamer);
-//                GameServer.gamerList.add(secondGamer);
-//
-//                GameProgress gameProgress = new GameProgress(firstGamer, secondGamer);
-//            }
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
     public void createAPairOfPlayers() {
         while (true) {
             int listSize = gamerList.size();
-            System.out.println(121212);
             if (listSize > 0) {
-//                int idGamerInList = rnd(0, listSize - 1);
-//                Client firstGamer = gamerList.get(idGamerInList);
-                System.out.println(listSize);
-//                gamerList.remove(firstGamer);
-//
-//                GameServer.gamerList.add(firstGamer);
+                int idGamerInList = rnd(0, listSize - 1);
+                Client firstGamer = gamerList.get(idGamerInList);
+                gamerList.remove(firstGamer);
 
-                //new GameProgress(firstGamer, null);
-                continue;
-            }
-            else {
-                System.out.println(listSize);
+//                idGamerInList = rnd(0, listSize - 2);
+//                Client secondGamer = gamerList.get(idGamerInList);
+//                gamerList.remove(secondGamer);
+//
+//                new GameProgress(firstGamer, secondGamer);
+                new GameProgress(firstGamer, null);
             }
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

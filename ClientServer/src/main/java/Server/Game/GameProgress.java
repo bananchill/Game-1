@@ -10,6 +10,7 @@ import Server.Game.Enemy.EnemyType;
 import Server.Game.Item.Item;
 import Server.Game.Item.ItemType;
 import Server.Game.Server.GameServer;
+import Server.Message.Converter;
 import Server.Message.Message;
 import Server.Message.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,13 +33,36 @@ public class GameProgress extends GameServer {
     private void loadingGame() {
         listChests = new ArrayList<>();
         listEnemy = new ArrayList<>();
-
         sendInfo(MessageType.LOADING_GAME, null);
 
         createChests();
-        //createEnemy();
+        createEnemy();
 
         sendInfo(MessageType.SET_INFO, null);
+
+        sendInfo();
+
+        System.out.println("Start the game!");
+    }
+
+    private String parseEnemy(EnemyBot enemy) {
+        String enemyInfo = "";
+        try {
+            enemyInfo = Converter.objectToXml(enemy);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return enemyInfo;
+    }
+
+    private String parseChests(Chest chest) {
+        String chestInfo = "";
+        try {
+            chestInfo = Converter.objectToXml(chest);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return chestInfo;
     }
 
     private void createEnemy() {
@@ -47,8 +71,8 @@ public class GameProgress extends GameServer {
         EnemyBot enemy = null;
 
         for (int i = 0; i < 10; ) {
-            x = rnd(0, 1200);
-            z = rnd(0, 520);
+            x = rnd(0, 3000);
+            z = rnd(0, 1000);
             typeEnemy = rnd(0, 3);
 
             if (checkChest(x, z) && checkEnemy(x, z)) {
@@ -69,37 +93,14 @@ public class GameProgress extends GameServer {
         }
     }
 
-    private boolean checkEnemy(float x, float z) {
-        for (EnemyBot elem : listEnemy) {
-            if (elem.getX() >= x) {
-                if (elem.getX() - x <= 30) {
-                    if (elem.getZ() >= z) {
-                        if (elem.getZ() - z <= 30) return false;
-                    } else {
-                        if (z - elem.getZ() <= 30) return false;
-                    }
-                }
-            } else {
-                if (x - elem.getX() <= 30) {
-                    if (elem.getZ() >= z) {
-                        if (elem.getZ() - z <= 30) return false;
-                    } else {
-                        if (z - elem.getZ() <= 30) return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
     private void createChests() {
         List<Item> listItems = new ArrayList<>();
         int x, z;
         int typeChest;
 
         for (int i = 0; i < 5; ) {
-            x = rnd(0, 1200);
-            z = rnd(0, 520);
+            x = rnd(0, 3000);
+            z = rnd(0, 1000);
             typeChest = rnd(0, 4);
 
             ChestType type = null;
@@ -132,6 +133,31 @@ public class GameProgress extends GameServer {
         }
     }
 
+    private boolean checkEnemy(float x, float z) {
+        for (EnemyBot elem : listEnemy) {
+            if (elem != null) {
+                if (elem.getX() >= x) {
+                    if (elem.getX() - x <= 30) {
+                        if (elem.getZ() >= z) {
+                            if (elem.getZ() - z <= 30) return false;
+                        } else {
+                            if (z - elem.getZ() <= 30) return false;
+                        }
+                    }
+                } else {
+                    if (x - elem.getX() <= 30) {
+                        if (elem.getZ() >= z) {
+                            if (elem.getZ() - z <= 30) return false;
+                        } else {
+                            if (z - elem.getZ() <= 30) return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     private List<Item> createListItem(ChestType type) {
         List<Item> listItems = new ArrayList<>();
         int countItems = rnd(1, 3);
@@ -145,7 +171,7 @@ public class GameProgress extends GameServer {
                     break;
                 case 1:
                     type = ChestType.RARE;
-                    listItems.add(new Item(ItemType.SWORD, rnd(0, 20),rnd(0, 40), rnd(0, 1000)));
+                    listItems.add(new Item(ItemType.SWORD, rnd(0, 20), rnd(0, 40), rnd(0, 1000)));
                     break;
             }
         }
@@ -177,9 +203,33 @@ public class GameProgress extends GameServer {
 
     private void sendInfo(MessageType type, String message) {
         try {
-            System.out.println("send mess 1231321");
             sendMessage(firstGamer.getConnection(), new Message(type, message));
             //sendMessage(secondGamer.getConnection(), new Message(type, message));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendInfo() {
+        for (Chest chest : listChests) {
+            try {
+                sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_CHEST, parseChests(chest)));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            //sendMessage(secondGamer.getConnection(), message);
+        }
+
+        for (EnemyBot enemy : listEnemy) {
+            try {
+                sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            //sendMessage(secondGamer.getConnection(), message);
+        }
+        try {
+            sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_END, null));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
