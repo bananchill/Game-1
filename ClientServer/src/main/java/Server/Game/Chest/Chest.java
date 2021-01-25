@@ -12,22 +12,22 @@ public class Chest {
 
     @JacksonXmlProperty(localName = "chestType")
     private ChestType type;
-    @JacksonXmlProperty(localName="Item")
-    @JacksonXmlElementWrapper(localName = "listItem")
-    private List<Item> listItem;
     @JacksonXmlProperty(localName = "x")
     private float x;
     @JacksonXmlProperty(localName = "z")
     private float z;
+    @JacksonXmlProperty(localName="Item")
+    @JacksonXmlElementWrapper(localName = "listItem")
+    private List<Item> listItem;
 
     public Chest() {
     }
 
-    public Chest(ChestType type, List<Item> listItem, float x, float z) {
+    public Chest(ChestType type, float x, float z, List<Item> listItem) {
         this.type = type;
-        this.listItem = listItem;
         this.x = x;
         this.z = z;
+        this.listItem = listItem;
     }
 
     public ChestType getType() {

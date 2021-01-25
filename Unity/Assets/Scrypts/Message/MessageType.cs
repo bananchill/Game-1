@@ -19,6 +19,10 @@
         SET_INFO,
         SET_CHEST,
         SET_ENEMY,
-        SET_END
+        SET_END,
+        W,
+        A,
+        S,
+        D
     }
 }

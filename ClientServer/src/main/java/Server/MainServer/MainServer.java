@@ -46,7 +46,7 @@ public class MainServer extends Server implements SendBroadcast {
             sendBroadcastMessage(new Message(MessageType.USER_ADDED, client.getNickname()));
             serverMainLoop(client);
         } catch (IOException e) {
-            ConsoleHelper.writeMessage("Ошибка при обмене данными с удаленным адресом");
+            ConsoleHelper.writeMessage("Ошибка при обмене данными с удаленным адресом " + e.getMessage());
         }
     }
 

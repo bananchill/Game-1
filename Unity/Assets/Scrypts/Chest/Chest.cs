@@ -1,13 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Assets.Scrypts
 {
+    [Serializable]
     public class Chest
     {
-        private ChestType type;
-        private List<Item> listItem;
-        private float x;
-        private float z;
+        [XmlElement("chestType")]
+        public ChestType type { get; set; }
+        [XmlArray("listItem"), XmlArrayItem("Item")]
+        public List<Item> listItem { get; set; }
+        [XmlElement]
+        public float x { get; set; }
+        [XmlElement]
+        public float z { get; set; }
 
         public Chest() { }
 
@@ -17,26 +24,6 @@ namespace Assets.Scrypts
             this.listItem = listItem;
             this.x = x;
             this.z = z;
-        }
-
-        public ChestType Type()
-        {
-            return type;
-        }
-
-        public List<Item> ListItem()
-        {
-            return listItem;
-        }
-
-        public float X()
-        {
-            return x;
-        }
-
-        public float Z()
-        {
-            return z;
         }
     }
 }

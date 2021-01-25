@@ -33,8 +33,7 @@ public class GameServer extends Server {
                         if (checkAccount(connection, message)) {
                             sendMessage(client.getConnection(), new Message(MessageType.AUTHORIZATION));
                             break;
-                        }
-                        else {
+                        } else {
                             clientRemove(client);
                             return;
                         }
@@ -81,6 +80,18 @@ public class GameServer extends Server {
             Message message = client.getConnection().receive();
             if (message != null) {
                 if (message.getType() == MessageType.TEST_WORK) {
+                    client.setOnline(true);
+                } else if (message.getType() == MessageType.W) {
+                    ConsoleHelper.writeMessage("w");
+                    client.setOnline(true);
+                } else if (message.getType() == MessageType.A) {
+                    ConsoleHelper.writeMessage("a");
+                    client.setOnline(true);
+                } else if (message.getType() == MessageType.S) {
+                    ConsoleHelper.writeMessage("s");
+                    client.setOnline(true);
+                } else if (message.getType() == MessageType.D) {
+                    ConsoleHelper.writeMessage("d");
                     client.setOnline(true);
                 } else {
                     ConsoleHelper.writeMessage("Error type " + message.getType() + " " + message.getData());

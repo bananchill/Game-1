@@ -14,13 +14,4 @@ public interface SendMessage {
             ConsoleHelper.writeMessage("Сообщение до пользователя не отправлено");
         }
     }
-
-    default void sendMessage(Connection connection, String message) {
-        try {
-            connection.send(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ConsoleHelper.writeMessage("Сообщение до пользователя не отправлено");
-        }
-    }
 }

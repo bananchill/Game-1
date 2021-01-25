@@ -1,11 +1,19 @@
-﻿namespace Assets.Scrypts
+﻿using System;
+using System.Xml.Serialization;
+
+namespace Assets.Scrypts
 {
+    [Serializable]
     public class Item
     {
-        private ItemType type;
-        private int damage;
-        private int armor;
-        private int health;
+        [XmlElement("itemType")]
+        public ItemType type { get; set; }
+        [XmlElement]
+        public int damage { get; set; }
+        [XmlElement]
+        public int armor { get; set; }
+        [XmlElement]
+        public int health { get; set; }
 
         public Item()
         {
@@ -17,26 +25,6 @@
             this.damage = damage;
             this.armor = armor;
             this.health = health;
-        }
-
-        public ItemType Type()
-        {
-            return type;
-        }
-
-        public int Damage()
-        {
-            return damage;
-        }
-
-        public int Armor()
-        {
-            return armor;
-        }
-
-        public int Health()
-        {
-            return health;
         }
     }
 }

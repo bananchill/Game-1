@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scrypts
 {
@@ -43,7 +41,7 @@ namespace Assets.Scrypts
                 {
                     if (message.Type() == MessageType.LOADING_GAME && !loagingGame)
                     {
-                        FirstGame.WaitTheGame();
+                        CharacterGame.WaitTheGame();
                         message = connection.Receive();
                         loagingGame = true;
                     }
@@ -61,10 +59,12 @@ namespace Assets.Scrypts
                                 }
                                 if (message.Type() == MessageType.SET_ENEMY)
                                 {
+
                                 }
                                 if (message.Type() == MessageType.SET_END)
                                 {
-
+                                    CharacterGame.isSpawn = true;
+                                    CharacterGame.isGame = true;
                                     break;
                                 }
                             }
@@ -74,9 +74,28 @@ namespace Assets.Scrypts
                 }
                 else
                 {
-                    ServerClose();
+                    //ServerClose();
                     return;
                 }
+            }
+        }
+
+        public void SendStep(string step)
+        {
+            switch(step)
+            {
+                case "W":
+                    SendTextMessage(new Message(MessageType.W));
+                    break;
+                case "A":
+                    connection.Send(new Message(MessageType.A));
+                    break;
+                case "S":
+                    connection.Send(new Message(MessageType.S));
+                    break;
+                case "D":
+                    connection.Send(new Message(MessageType.D));
+                    break;
             }
         }
     }

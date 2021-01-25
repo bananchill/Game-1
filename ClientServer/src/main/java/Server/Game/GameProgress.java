@@ -101,7 +101,7 @@ public class GameProgress extends GameServer {
         for (int i = 0; i < 5; ) {
             x = rnd(0, 3000);
             z = rnd(0, 1000);
-            typeChest = rnd(0, 4);
+            typeChest = rnd(0, 3);
 
             ChestType type = null;
 
@@ -115,17 +115,17 @@ public class GameProgress extends GameServer {
                         type = ChestType.RARE;
                         listItems = createListItem(ChestType.RARE);
                         break;
-                    case 3:
+                    case 2:
                         type = ChestType.EPIC;
                         listItems = createListItem(ChestType.EPIC);
                         break;
-                    case 4:
+                    case 3:
                         type = ChestType.ENCHANTED;
                         listItems = createListItem(ChestType.ENCHANTED);
                         break;
                 }
 
-                Chest chest = new Chest(type, listItems, x, z);
+                Chest chest = new Chest(type, x, z, listItems);
 
                 listChests.add(chest);
                 i++;
@@ -167,11 +167,11 @@ public class GameProgress extends GameServer {
             switch (typeItem) {
                 case 0:
                     type = ChestType.COMMON;
-                    listItems.add(new Item(ItemType.SHIELD, rnd(0, 2), rnd(0, 4), rnd(0, 5)));
+                    listItems.add(new Item(ItemType.SHIELD, rnd(1, 2), rnd(1, 4), rnd(1, 5)));
                     break;
                 case 1:
                     type = ChestType.RARE;
-                    listItems.add(new Item(ItemType.SWORD, rnd(0, 20), rnd(0, 40), rnd(0, 1000)));
+                    listItems.add(new Item(ItemType.SWORD, rnd(1, 20), rnd(1, 40), rnd(1, 1000)));
                     break;
             }
         }
