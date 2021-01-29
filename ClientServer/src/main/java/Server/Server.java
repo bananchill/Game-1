@@ -95,7 +95,7 @@ public abstract class Server implements SendMessage {
                 try {
                     client.getConnection().send(new Message(MessageType.TEST_WORK));
                     if (!client.isOnline()) {
-                        Thread.sleep(5000);
+                        Thread.sleep(1000);
                         if (!!client.isOnline()) {
                             clientRemove(client);
                             System.out.println("check close");
@@ -107,7 +107,7 @@ public abstract class Server implements SendMessage {
                 }
             }
             try {
-                Thread.sleep(30000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

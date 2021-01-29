@@ -46,5 +46,17 @@ namespace Assets.Scrypts
             }
             return message;
         }
+
+        public static EnemyBot XmlToEnemy(string s)
+        {
+            EnemyBot message;
+            ConsoleHelper.WriteMessage(s + " enemyyyy");
+            var serializer = new XmlSerializer(typeof(EnemyBot));
+            using (var xmlStream = new StringReader(s))
+            {
+                message = (EnemyBot)serializer.Deserialize(xmlStream);
+            }
+            return message;
+        }
     }
 }

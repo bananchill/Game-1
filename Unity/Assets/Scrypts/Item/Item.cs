@@ -26,5 +26,10 @@ namespace Assets.Scrypts
             this.armor = armor;
             this.health = health;
         }
+
+        public override string ToString()
+        {
+            return "Item = type:" + type + "; damage: " + damage + "; armor: " + armor + "; health " + health;
+        }
     }
 }

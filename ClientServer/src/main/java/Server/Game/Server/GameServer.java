@@ -3,6 +3,8 @@ package Server.Game.Server;
 import Server.Client.Client;
 import Server.Connection;
 import Server.ConsoleHelper;
+import Server.Game.Chest.Chest;
+import Server.Game.Enemy.EnemyBot;
 import Server.Game.GameProgress;
 import Server.Message.Message;
 import Server.Message.MessageType;
@@ -12,11 +14,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
+
+// TODO при отключении пользователя нужно перезагружать сервер, иначе клиенту не начать игру
 
 public class GameServer extends Server {
     public static ArrayList<Client> gamerList = new ArrayList<>();
     public static ArrayList<Client> potentialPlayersList = new ArrayList<>();
+    public static ArrayList<GameProgress> gameProgresses = new ArrayList<>();
+
+    Chest chest;
+    EnemyBot enemy;
+
+    public GameServer() {
+    }
 
     @Override
     public void startHandler(Socket socket) {
@@ -82,16 +92,20 @@ public class GameServer extends Server {
                 if (message.getType() == MessageType.TEST_WORK) {
                     client.setOnline(true);
                 } else if (message.getType() == MessageType.W) {
-                    ConsoleHelper.writeMessage("w");
+                    client.setZ(client.getZ() + 1);
+                    checkEnemyAndChest(client);
                     client.setOnline(true);
                 } else if (message.getType() == MessageType.A) {
-                    ConsoleHelper.writeMessage("a");
+                    client.setX(client.getX() - 1);
+                    checkEnemyAndChest(client);
                     client.setOnline(true);
                 } else if (message.getType() == MessageType.S) {
-                    ConsoleHelper.writeMessage("s");
+                    client.setZ(client.getZ() - 1);
+                    checkEnemyAndChest(client);
                     client.setOnline(true);
                 } else if (message.getType() == MessageType.D) {
-                    ConsoleHelper.writeMessage("d");
+                    client.setX(client.getX() + 1);
+                    checkEnemyAndChest(client);
                     client.setOnline(true);
                 } else {
                     ConsoleHelper.writeMessage("Error type " + message.getType() + " " + message.getData());
@@ -104,11 +118,36 @@ public class GameServer extends Server {
         }
     }
 
+    private void checkEnemyAndChest(Client client) {
+        for (GameProgress game : gameProgresses) {
+            if (game.firstGamer.getConnection().equals(client.getConnection())) { //TODO добавить для второго пользователя
+                chest = game.isTheChestFar1(client.getX(), client.getZ());
+                enemy = game.isTheEnemyFar1(client.getX(), client.getZ());
+            }
+        }
+
+        if (chest != null) {
+            try {
+                sendMessage(client.getConnection(), new Message(MessageType.GOT_CHEST, chest.getX() + "#" + chest.getZ()));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (enemy != null) {
+            try {
+                sendMessage(client.getConnection(), new Message(MessageType.GOT_ENEMY, enemy.getX() + "#" + enemy.getZ()));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void createAPairOfPlayers() {
         while (true) {
             int listSize = gamerList.size();
             if (listSize > 0) {
-                int idGamerInList = rnd(0, listSize - 1);
+                int idGamerInList = GameProgress.rnd(0, listSize - 1);
                 Client firstGamer = gamerList.get(idGamerInList);
                 gamerList.remove(firstGamer);
 
@@ -117,7 +156,10 @@ public class GameServer extends Server {
 //                gamerList.remove(secondGamer);
 //
 //                new GameProgress(firstGamer, secondGamer);
-                new GameProgress(firstGamer, null);
+
+                GameProgress thread = new GameProgress(firstGamer, null);
+                thread.start();
+                gameProgresses.add(thread);
             }
             try {
                 Thread.sleep(1000);
@@ -125,10 +167,5 @@ public class GameServer extends Server {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static int rnd(int min, int max) {
-        max -= min;
-        return (int) (Math.random() * ++max) + min;
     }
 }

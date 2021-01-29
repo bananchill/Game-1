@@ -66,6 +66,9 @@
     <Compile Include="Assets\Scrypts\Client\GameServer.cs" />
     <Compile Include="Assets\Scrypts\Connection.cs" />
     <Compile Include="Assets\Scrypts\ConsoleHelper.cs" />
+    <Compile Include="Assets\Scrypts\Enemy\AcolyteEnemy.cs" />
+    <Compile Include="Assets\Scrypts\Enemy\EnemyBot.cs" />
+    <Compile Include="Assets\Scrypts\Enemy\EnemyType.cs" />
     <Compile Include="Assets\Scrypts\GameFirst\Camera.cs" />
     <Compile Include="Assets\Scrypts\GameFirst\CharacterGame.cs" />
     <Compile Include="Assets\Scrypts\Interfaces\SendMessage.cs" />

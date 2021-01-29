@@ -20,5 +20,7 @@ public enum MessageType {
     W,
     A,
     S,
-    D
+    D,
+    GOT_CHEST,
+    GOT_ENEMY
 }

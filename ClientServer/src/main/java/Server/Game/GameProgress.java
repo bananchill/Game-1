@@ -1,7 +1,6 @@
 package Server.Game;
 
 import Server.Client.Client;
-import Server.ConsoleHelper;
 import Server.Game.Chest.Chest;
 import Server.Game.Chest.ChestType;
 import Server.Game.Enemy.AcolyteEnemy;
@@ -18,16 +17,29 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameProgress extends GameServer {
-    public List<Chest> listChests;
-    public List<EnemyBot> listEnemy;
-    private Client firstGamer;
-    private Client secondGamer;
+public class GameProgress extends Thread {
+    private List<Chest> listChests;
+    private List<EnemyBot> listEnemy;
+    public Client firstGamer;
+    public Client secondGamer;
+    private GameServer gameServer;
 
     public GameProgress(Client firstGamer, Client secondGamer) {
         this.firstGamer = firstGamer;
         this.secondGamer = secondGamer;
+    }
+
+    @Override
+    public void run() {
+        gameServer = new GameServer();
+
         loadingGame();
+        startGame();
+    }
+
+    private void startGame() {
+//        while (true) {
+//        }
     }
 
     private void loadingGame() {
@@ -75,7 +87,7 @@ public class GameProgress extends GameServer {
             z = rnd(0, 1000);
             typeEnemy = rnd(0, 3);
 
-            if (checkChest(x, z) && checkEnemy(x, z)) {
+            if (isTheChestFar(x, z) && isTheEnemyFar(x, z)) {
                 switch (typeEnemy) {
                     case 0:
                         enemy = new AcolyteEnemy(EnemyType.ACOLYTE, rnd(10, 20), rnd(1, 3), x, z);
@@ -105,7 +117,7 @@ public class GameProgress extends GameServer {
 
             ChestType type = null;
 
-            if (checkChest(x, z)) {
+            if (isTheChestFar(x, z)) {
                 switch (typeChest) {
                     case 0:
                         type = ChestType.COMMON;
@@ -133,7 +145,7 @@ public class GameProgress extends GameServer {
         }
     }
 
-    private boolean checkEnemy(float x, float z) {
+    public boolean isTheEnemyFar(float x, float z) {
         for (EnemyBot elem : listEnemy) {
             if (elem != null) {
                 if (elem.getX() >= x) {
@@ -178,7 +190,7 @@ public class GameProgress extends GameServer {
         return listItems;
     }
 
-    private boolean checkChest(float x, float z) {
+    public boolean isTheChestFar(float x, float z) {
         for (Chest elem : listChests) {
             if (elem.getX() >= x) {
                 if (elem.getX() - x <= 30) {
@@ -201,9 +213,57 @@ public class GameProgress extends GameServer {
         return true;
     }
 
+    public Chest isTheChestFar1(float x, float z) {
+        for (Chest elem : listChests) {
+            if (elem.getX() >= x) {
+                if (elem.getX() - x <= 30) {
+                    if (elem.getZ() >= z) {
+                        if (elem.getZ() - z <= 30) return elem;
+                    } else {
+                        if (z - elem.getZ() <= 30) return elem;
+                    }
+                }
+            } else {
+                if (x - elem.getX() <= 30) {
+                    if (elem.getZ() >= z) {
+                        if (elem.getZ() - z <= 30) return elem;
+                    } else {
+                        if (z - elem.getZ() <= 30) return elem;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public EnemyBot isTheEnemyFar1(float x, float z) {
+        for (EnemyBot elem : listEnemy) {
+            if (elem != null) {
+                if (elem.getX() >= x) {
+                    if (elem.getX() - x <= 30) {
+                        if (elem.getZ() >= z) {
+                            if (elem.getZ() - z <= 30) return elem;
+                        } else {
+                            if (z - elem.getZ() <= 30) return elem;
+                        }
+                    }
+                } else {
+                    if (x - elem.getX() <= 30) {
+                        if (elem.getZ() >= z) {
+                            if (elem.getZ() - z <= 30) return elem;
+                        } else {
+                            if (z - elem.getZ() <= 30) return elem;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     private void sendInfo(MessageType type, String message) {
         try {
-            sendMessage(firstGamer.getConnection(), new Message(type, message));
+            gameServer.sendMessage(firstGamer.getConnection(), new Message(type, message));
             //sendMessage(secondGamer.getConnection(), new Message(type, message));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -213,7 +273,7 @@ public class GameProgress extends GameServer {
     private void sendInfo() {
         for (Chest chest : listChests) {
             try {
-                sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_CHEST, parseChests(chest)));
+                gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_CHEST, parseChests(chest)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -222,16 +282,22 @@ public class GameProgress extends GameServer {
 
         for (EnemyBot enemy : listEnemy) {
             try {
-                sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
+                gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
             //sendMessage(secondGamer.getConnection(), message);
         }
+
         try {
-            sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_END, null));
+            gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_END, null));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int rnd(int min, int max) {
+        max -= min;
+        return (int) (Math.random() * ++max) + min;
     }
 }

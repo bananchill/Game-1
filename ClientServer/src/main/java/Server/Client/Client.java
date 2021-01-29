@@ -1,6 +1,9 @@
 package Server.Client;
 
 import Server.Connection;
+import Server.Game.Item.Item;
+
+import java.util.List;
 
 public class Client {
     private int id;
@@ -11,6 +14,11 @@ public class Client {
     private String email;
     private int gold;
     private int crystal;
+
+    private List<Item> listItem;
+
+    private float x;
+    private float z;
 
     public Client() {
     }
@@ -79,6 +87,30 @@ public class Client {
 
     public int getCrystal() {
         return crystal;
+    }
+
+    public List<Item> getListItem() {
+        return listItem;
+    }
+
+    public void setListItem(List<Item> listItem) {
+        this.listItem = listItem;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getZ() {
+        return z;
+    }
+
+    public void setZ(float z) {
+        this.z = z;
     }
 
     public void close() {
