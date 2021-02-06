@@ -14,7 +14,7 @@ public class Message implements Serializable {
 
     @JacksonXmlProperty(localName = "type")
     private MessageType type;
-    //@JacksonXmlProperty(localName = "data")
+    @JacksonXmlProperty(localName = "data")
     private String data;
     @JsonIgnore
     private String xml;
@@ -45,7 +45,11 @@ public class Message implements Serializable {
         return xml;
     }
 
-    public void setXml() throws JsonProcessingException {
-        this.xml = Converter.objectToXml(this);
+    public void setXml() {
+        try {
+            this.xml = Converter.objectToXml(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }

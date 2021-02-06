@@ -20,9 +20,9 @@ namespace Assets.Scrypts
 
                 if (message != null)
                 {
-                    if (message.Type() == MessageType.TEXT)
+                    if (message.type == MessageType.TEXT)
                     {
-                        Debug.Log(message.data);
+                        ConsoleHelper.WriteMessage(message.data);
                     }
                     online = true;
                 }
@@ -36,28 +36,28 @@ namespace Assets.Scrypts
 
         public static void SetAccount(Message message)
         {
-            string[] data = message.Data().Split('#');
+            string[] data = message.data.Split('#');
 
-            Account.character = new Character(int.Parse(data[0]), data[1], data[2], data[3], int.Parse(data[4]), int.Parse(data[5]));
+            Account.character = new Character(int.Parse(data[0]), data[1], data[2], data[3], int.Parse(data[4]));
             Debug.Log("Account character was been set");
         }
 
         public static void AddCharacter(Character character)
         {
-            string data = character.Mail() + "#" + character.Password() + "#" + character.Nickname();
+            string data = character.mail + "#" + character.password + "#" + character.nickname;
             connection.Send(new Message(MessageType.REGISTRATION, data));
             while (true)
             {
                 Message message = connection.Receive();
                 if (message != null)
                 {
-                    if (message.Type() == MessageType.REGISTRATION)
+                    if (message.type == MessageType.REGISTRATION)
                     {
                         SetAccount(message);
                         Debug.Log("Got character before registration");
                         return;
                     }
-                    if (message.Type() == MessageType.ERROR_REGISTRATION)
+                    if (message.type == MessageType.ERROR_REGISTRATION)
                     {
                         Debug.Log("Error registration");
                     }
@@ -69,7 +69,8 @@ namespace Assets.Scrypts
 
         public static void Entry(Character character)
         {
-            string data = character.Mail() + "#" + character.Password();
+            //string data = character.Mail() + "#" + character.Password();
+            string data = "doctor@mail.ru" + "#" + "password1234";
             //string data1 = character.Mail() + "#" + character.Password() + "#" + Converter.CharacterToXml(character);
             connection.Send(new Message(MessageType.AUTHORIZATION, data));
             while (true)
@@ -77,13 +78,13 @@ namespace Assets.Scrypts
                 Message message = connection.Receive();
                 if (message != null)
                 {
-                    if (message.Type() == MessageType.AUTHORIZATION)
+                    if (message.type == MessageType.AUTHORIZATION)
                     {
                         SetAccount(message);
                         Debug.Log("Got character before entry");
                         return;
                     }
-                    if (message.Type() == MessageType.ERROR_AUTHORIZATION)
+                    if (message.type == MessageType.ERROR_AUTHORIZATION)
                     {
                         Debug.Log("Error authorization");
                     }

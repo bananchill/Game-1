@@ -57,8 +57,7 @@ public class DatabaseHelper {
             pstmt.setString(2, client.getPassword());
             pstmt.setString(3, client.getEmail());
             pstmt.setInt(4, client.getGold());
-            pstmt.setInt(5, client.getCrystal());
-            pstmt.setBoolean(6, client.isOnline());
+            pstmt.setBoolean(5, client.isOnline());
 
             pstmt.executeUpdate();
         } catch (SQLException ex) {
@@ -74,8 +73,7 @@ public class DatabaseHelper {
 
             while (result.next()) {
                 client = new Client(result.getInt("idCharacter"), result.getString("nickname"), result.getString("password"),
-                        result.getString("email"), result.getInt("gold"),
-                        result.getInt("crystal"), result.getBoolean("status"));
+                        result.getString("email"), result.getInt("gold"), result.getBoolean("status"));
             }
         } catch (SQLException e) {
             System.out.println("Ошибка sql запроса");
@@ -91,8 +89,7 @@ public class DatabaseHelper {
 
             while (result.next()) {
                 client = new Client(result.getInt("idCharacter"), result.getString("nickname"), result.getString("password"),
-                        result.getString("email"), result.getInt("gold"),
-                        result.getInt("crystal"), result.getBoolean("status"));
+                        result.getString("email"), result.getInt("gold"), result.getBoolean("status"));
             }
 
             if(client == null) {

@@ -8,10 +8,10 @@ namespace Assets.Scrypts
     {
         [XmlElement("itemType")]
         public ItemType type { get; set; }
+
         [XmlElement]
         public int damage { get; set; }
-        [XmlElement]
-        public int armor { get; set; }
+
         [XmlElement]
         public int health { get; set; }
 
@@ -19,17 +19,16 @@ namespace Assets.Scrypts
         {
         }
 
-        public Item(ItemType type, int damage, int armor, int health)
+        public Item(ItemType type, int damage, int health)
         {
             this.type = type;
             this.damage = damage;
-            this.armor = armor;
             this.health = health;
         }
 
         public override string ToString()
         {
-            return "Item = type:" + type + "; damage: " + damage + "; armor: " + armor + "; health " + health;
+            return "Item = type:" + type + "; damage: " + damage + "; health " + health;
         }
     }
 }

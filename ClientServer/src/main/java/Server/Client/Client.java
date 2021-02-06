@@ -1,6 +1,8 @@
 package Server.Client;
 
 import Server.Connection;
+import Server.Game.Chest.Chest;
+import Server.Game.Enemy.EnemyBot;
 import Server.Game.Item.Item;
 
 import java.util.List;
@@ -13,8 +15,11 @@ public class Client {
     private String password;
     private String email;
     private int gold;
-    private int crystal;
+    private int health;
+    private boolean isReady;
 
+    private List<Chest> listChest;
+    private List<EnemyBot> listEnemy;
     private List<Item> listItem;
 
     private float x;
@@ -28,23 +33,25 @@ public class Client {
         status = true;
     }
 
-    public Client(String nickname, String password, String email, int gold, int crystal, boolean status) {
+    public Client(String nickname, String password, String email, int gold, boolean status) {
         this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.gold = gold;
-        this.crystal = crystal;
         this.status = status;
+        this.health = 100;
+        isReady = false;
     }
 
-    public Client(int id, String nickname, String password, String email, int gold, int crystal, boolean status) {
+    public Client(int id, String nickname, String password, String email, int gold, boolean status) {
         this.id = id;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.gold = gold;
-        this.crystal = crystal;
         this.status = status;
+        this.health = 100;
+        isReady = false;
     }
 
     public int getId() {
@@ -85,16 +92,28 @@ public class Client {
         return gold;
     }
 
-    public int getCrystal() {
-        return crystal;
-    }
-
     public List<Item> getListItem() {
         return listItem;
     }
 
     public void setListItem(List<Item> listItem) {
         this.listItem = listItem;
+    }
+
+    public List<Chest> getListChest() {
+        return listChest;
+    }
+
+    public void setListChest(List<Chest> listChest) {
+        this.listChest = listChest;
+    }
+
+    public List<EnemyBot> getListEnemy() {
+        return listEnemy;
+    }
+
+    public void setListEnemy(List<EnemyBot> listEnemy) {
+        this.listEnemy = listEnemy;
     }
 
     public float getX() {
@@ -111,6 +130,22 @@ public class Client {
 
     public void setZ(float z) {
         this.z = z;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady(boolean ready) {
+        isReady = ready;
     }
 
     public void close() {

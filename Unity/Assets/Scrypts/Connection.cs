@@ -19,7 +19,7 @@ namespace Assets.Scrypts
 
         public void Send(Message message)
         {
-            writer.WriteLine(message.Xml());
+            writer.WriteLine(message.xml);
             writer.Flush();
         }
 

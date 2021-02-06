@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Struct;
 
 public class MainServer extends Server implements SendBroadcast {
 
@@ -39,7 +40,7 @@ public class MainServer extends Server implements SendBroadcast {
                         break;
                     }
                 } else {
-                    clientRemove(client);
+                    clientRemove(client, false);
                     return;
                 }
             }
@@ -68,8 +69,7 @@ public class MainServer extends Server implements SendBroadcast {
                         ConsoleHelper.writeMessage("Error type " + message.getType() + " " + message.getData());
                     }
                 } else {
-                    clientRemove(client);
-                    System.out.println("main lobby close");
+                    clientRemove(client, false);
                     return;
                 }
             } catch (NullPointerException e) {
@@ -86,7 +86,7 @@ public class MainServer extends Server implements SendBroadcast {
         String nickname = data[2];
 
         try {
-            DatabaseHelper.addCharacter(new Client(nickname, password, mail, 1000, 0, true));
+            DatabaseHelper.addCharacter(new Client(nickname, password, mail, 1000, true));
             ConsoleHelper.writeMessage("Client was added");
         } catch (Exception e) {
             sendMessage(connection, new Message(MessageType.ERROR_REGISTRATION));
@@ -98,7 +98,7 @@ public class MainServer extends Server implements SendBroadcast {
         client.setConnection(connection);
 
         String mess = client.getId() + "#" + client.getNickname() + "#" + client.getPassword() + "#" + client.getEmail() + "#" +
-                client.getGold() + "#" + client.getCrystal();
+                client.getGold();
 
         DatabaseHelper.setStatus(client.getId(), true);
 
@@ -108,7 +108,7 @@ public class MainServer extends Server implements SendBroadcast {
 
     private void clientGoGame(Client client) {
         connectionList.remove(client);
-        client.setConnection(null);
+        clientRemove(client, true);
         GameServer.potentialPlayersList.add(client);
         ConsoleHelper.writeMessage("Client " + client.getNickname() + " goes to game");
     }

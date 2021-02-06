@@ -15,12 +15,11 @@ namespace Assets.Scrypts
         {
             string serializeCharacter =
                 $"<character>" +
-                $"<id>{account.Id()}</id>" +
-                $"<nickname>{account.Nickname()}</nickname>" +
-                $"<password>{account.Password()}</password>" +
-                $"<mail>{account.Mail()}</mail>" +
-                $"<gold>{account.Gold()}</gold>" +
-                $"<crystal>{account.Crystal()}</crystal>" +
+                $"<id>{account.id}</id>" +
+                $"<nickname>{account.nickname}</nickname>" +
+                $"<password>{account.password}</password>" +
+                $"<mail>{account.mail}</mail>" +
+                $"<gold>{account.gold}</gold>" +
                 $"</character>";
             return serializeCharacter;
         }
@@ -50,10 +49,10 @@ namespace Assets.Scrypts
         public static EnemyBot XmlToEnemy(string s)
         {
             EnemyBot message;
-            ConsoleHelper.WriteMessage(s + " enemyyyy");
             var serializer = new XmlSerializer(typeof(EnemyBot));
             using (var xmlStream = new StringReader(s))
             {
+                ConsoleHelper.WriteMessage(s);
                 message = (EnemyBot)serializer.Deserialize(xmlStream);
             }
             return message;

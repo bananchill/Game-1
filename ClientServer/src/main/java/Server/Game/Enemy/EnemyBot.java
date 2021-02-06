@@ -1,11 +1,25 @@
 package Server.Game.Enemy;
 
-public abstract class EnemyBot {
+import Server.Client.Client;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+@JacksonXmlRootElement(localName = "EnemyBot")
+public class EnemyBot {
+
+    @JacksonXmlProperty(localName = "enemyType")
     private EnemyType type;
+    @JacksonXmlProperty(localName = "health")
     private int health;
+    @JacksonXmlProperty(localName = "damage")
     private int damage;
+    @JacksonXmlProperty(localName = "x")
     private float x;
+    @JacksonXmlProperty(localName = "z")
     private float z;
+    @JsonIgnore
+    private boolean isLive;
 
     public EnemyBot() {
     }
@@ -16,6 +30,7 @@ public abstract class EnemyBot {
         this.damage = damage;
         this.x = x;
         this.z = z;
+        this.isLive = true;
     }
 
     public EnemyType getType() {
@@ -46,9 +61,11 @@ public abstract class EnemyBot {
         this.z = z;
     }
 
-    public abstract void attack();
+    public void attack(Client client) {
+        client.setHealth(client.getHealth() - getDamage());
+    }
 
     public void die() {
-
+        isLive = false;
     }
 }

@@ -21,6 +21,11 @@ public enum MessageType {
     A,
     S,
     D,
+    DOWN_E,
+    UP_E,
     GOT_CHEST,
-    GOT_ENEMY
+    GOT_ENEMY,
+    READY,
+    START,
+    ROUND_END
 }

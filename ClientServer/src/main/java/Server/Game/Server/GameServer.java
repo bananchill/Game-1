@@ -44,12 +44,12 @@ public class GameServer extends Server {
                             sendMessage(client.getConnection(), new Message(MessageType.AUTHORIZATION));
                             break;
                         } else {
-                            clientRemove(client);
+                            clientRemove(client, false);
                             return;
                         }
                     }
                 } else {
-                    clientRemove(client);
+                    clientRemove(client, false);
                     return;
                 }
             }
@@ -107,22 +107,43 @@ public class GameServer extends Server {
                     client.setX(client.getX() + 1);
                     checkEnemyAndChest(client);
                     client.setOnline(true);
+                } else if (message.getType() == MessageType.DOWN_E && checkChest(client)) {
+                    System.out.println("DOWN_E");
+                    client.setOnline(true);
+                } else if (message.getType() == MessageType.UP_E && checkChest(client)) {
+                    System.out.println("UP_E");
+                    client.setOnline(true);
+                } else if (message.getType() == MessageType.READY) {
+                    client.setReady(true);
                 } else {
                     ConsoleHelper.writeMessage("Error type " + message.getType() + " " + message.getData());
                 }
             } else {
-                clientRemove(client);
+                clientRemove(client, false);
                 System.out.println("main in game close");
                 return;
             }
         }
     }
 
+    private boolean checkChest(Client client) {
+        for (GameProgress game : gameProgresses) {
+            if (game.firstGamer.getConnection().equals(client.getConnection())) {
+                chest = game.isTheChestFar1(client.getX(), client.getZ());
+                enemy = game.isTheEnemyFar1(client.getX(), client.getZ());
+            }
+        }
+
+        if (chest != null) {
+            return true;
+        }
+        return false;
+    }
+
     private void checkEnemyAndChest(Client client) {
         for (GameProgress game : gameProgresses) {
             if (game.firstGamer.getConnection().equals(client.getConnection())) { //TODO добавить для второго пользователя
                 chest = game.isTheChestFar1(client.getX(), client.getZ());
-                enemy = game.isTheEnemyFar1(client.getX(), client.getZ());
             }
         }
 

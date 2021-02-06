@@ -24,7 +24,13 @@
         A,
         S,
         D,
+        DOWN_E,
+        UP_E,
+        STEP,
         GOT_CHEST,
-        GOT_ENEMY
+        GOT_ENEMY,
+        READY,
+        START,
+        ROUND_END
     }
 }

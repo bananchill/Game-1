@@ -9,22 +9,25 @@ namespace Assets.Scrypts
 
         public static bool CheckCharacter()
         {
-            Debug.Log("Check character");
-            if (Read())
-            {
-                if (character.Mail().Length < 2 || character.Password().Length < 8)
-                {
-                    return false;
-                }
-                ClientServer.Entry(character);
-            }
+            //if (Read())
+            //{
+            //    //if (character.Mail().Length < 2 || character.Password().Length < 8)
+            //    //{
+            //    //    return false;
+            //    //}
+            //    //ClientServer.Entry(character);
+            //}
+
+            character = new Character("doctor@mail.ru", "password1234");
+            ClientServer.Entry(character);
+
             return true;
         }
 
         public static void Save(Character newCharacter)
         {
-            PlayerPrefs.SetString("Mail", newCharacter.Mail());
-            PlayerPrefs.SetString("Password", newCharacter.Password());
+            PlayerPrefs.SetString("Mail", newCharacter.mail);
+            PlayerPrefs.SetString("Password", newCharacter.password);
             Debug.Log("Saved character in file");
         }
 

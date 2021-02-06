@@ -2,7 +2,9 @@
 {
     public enum ItemType
     {
-        SWORD = 1,
-        SHIELD = 2
+        COMMON,
+        RARE,
+        EPIC,
+        ENCHANTED
     }
 }

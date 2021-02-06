@@ -24,6 +24,7 @@ namespace Assets.Scrypts
             Account.Save(character);
             ClientServer.Entry(character);
             Debug.Log(Client.clientConnected + " status client");
+            //Main.authorizationMenuUI.SetActive(false);
         }
     }
 }

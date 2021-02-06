@@ -3,7 +3,6 @@ package Server.Game;
 import Server.Client.Client;
 import Server.Game.Chest.Chest;
 import Server.Game.Chest.ChestType;
-import Server.Game.Enemy.AcolyteEnemy;
 import Server.Game.Enemy.EnemyBot;
 import Server.Game.Enemy.EnemyType;
 import Server.Game.Item.Item;
@@ -35,11 +34,58 @@ public class GameProgress extends Thread {
 
         loadingGame();
         startGame();
+
+        firstRound();
+    }
+
+    private void firstRound() {
+        int timeRound = 0;
+
+        try {
+            gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.START));
+            //gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.START));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        while (timeRound != 60) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            timeRound++;
+        }
+
+        try {
+            gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.ROUND_END));
+            //gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.ROUND_END));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void startGame() {
-//        while (true) {
+//        for (EnemyBot enemy : firstGamer.getListEnemy()) {
+//            enemy.start();
 //        }
+
+//        for (EnemyBot enemy: secondGamer.getListEnemy()) {
+//            enemy.start();
+//        }
+
+//        while (!firstGamer.isReady()) { //&& secondGamer.isReady()) {
+//            System.out.println(firstGamer.isReady());
+//
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+        System.out.println("Start the game!");
     }
 
     private void loadingGame() {
@@ -52,9 +98,7 @@ public class GameProgress extends Thread {
 
         sendInfo(MessageType.SET_INFO, null);
 
-        sendInfo();
-
-        System.out.println("Start the game!");
+        setInfo();
     }
 
     private String parseEnemy(EnemyBot enemy) {
@@ -85,18 +129,18 @@ public class GameProgress extends Thread {
         for (int i = 0; i < 10; ) {
             x = rnd(0, 3000);
             z = rnd(0, 1000);
-            typeEnemy = rnd(0, 3);
+            typeEnemy = rnd(0, 2);
 
             if (isTheChestFar(x, z) && isTheEnemyFar(x, z)) {
                 switch (typeEnemy) {
                     case 0:
-                        enemy = new AcolyteEnemy(EnemyType.ACOLYTE, rnd(10, 20), rnd(1, 3), x, z);
+                        enemy = new EnemyBot(EnemyType.ACOLYTE, rnd(10, 20), rnd(1, 3), x, z);
                         break;
                     case 1:
-                        listEnemy.add(new AcolyteEnemy(EnemyType.WARRIOR, rnd(20, 35), rnd(5, 10), x, z));
+                        enemy = new EnemyBot(EnemyType.WARRIOR, rnd(20, 35), rnd(5, 10), x, z);
                         break;
-                    case 3:
-                        listEnemy.add(new AcolyteEnemy(EnemyType.HEADMAN, rnd(50, 70), rnd(25, 50), x, z));
+                    case 2:
+                        enemy = new EnemyBot(EnemyType.HEADMAN, rnd(50, 70), rnd(25, 50), x, z);
                         break;
                 }
                 listEnemy.add(enemy);
@@ -136,7 +180,6 @@ public class GameProgress extends Thread {
                         listItems = createListItem(ChestType.ENCHANTED);
                         break;
                 }
-
                 Chest chest = new Chest(type, x, z, listItems);
 
                 listChests.add(chest);
@@ -179,11 +222,11 @@ public class GameProgress extends Thread {
             switch (typeItem) {
                 case 0:
                     type = ChestType.COMMON;
-                    listItems.add(new Item(ItemType.SHIELD, rnd(1, 2), rnd(1, 4), rnd(1, 5)));
+                    listItems.add(new Item(ItemType.COMMON, rnd(1, 2), rnd(1, 5)));
                     break;
                 case 1:
                     type = ChestType.RARE;
-                    listItems.add(new Item(ItemType.SWORD, rnd(1, 20), rnd(1, 40), rnd(1, 1000)));
+                    listItems.add(new Item(ItemType.RARE, rnd(1, 20), rnd(1, 1000)));
                     break;
             }
         }
@@ -270,30 +313,37 @@ public class GameProgress extends Thread {
         }
     }
 
-    private void sendInfo() {
+    private void setInfo() {
         for (Chest chest : listChests) {
             try {
                 gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_CHEST, parseChests(chest)));
+                //gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_CHEST, parseChests(chest)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            //sendMessage(secondGamer.getConnection(), message);
         }
 
         for (EnemyBot enemy : listEnemy) {
             try {
                 gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
+//                gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                 e.printStackTrace();
             }
-            //sendMessage(secondGamer.getConnection(), message);
         }
 
         try {
             gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_END, null));
+//            gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_END, null));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
+        firstGamer.setListChest(listChests);
+        firstGamer.setListEnemy(listEnemy);
+
+//        secondGamer.setListChest(listChests);
+//        secondGamer.setListEnemy(listEnemy);
     }
 
     public static int rnd(int min, int max) {

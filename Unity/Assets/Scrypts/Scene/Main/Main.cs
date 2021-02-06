@@ -9,7 +9,7 @@ namespace Assets.Scrypts
     public class Main : MonoBehaviour
     {
         public InputField input;
-        public Text nickname, gold, crystal;
+        public Text nickname, gold;
         public GameObject authorizationMenuUI;
         Thread threadAuth;
         ClientServer client;
@@ -22,6 +22,8 @@ namespace Assets.Scrypts
             client.StartClient("localhost", 3000);
             if (!Account.CheckCharacter())
             {
+                //authorizationMenuUI = Resources.Load<GameObject>("Authorization") as GameObject;
+                //Instantiate(authorizationMenuUI, new Vector2(0, 0), Quaternion.identity);
                 authorizationMenuUI.SetActive(true);
                 threadAuth = new Thread(new ThreadStart(WaitAuth));//не работает, не понимаю как скрыть форму и заполнить поля данными
                 threadAuth.Start();
@@ -29,9 +31,8 @@ namespace Assets.Scrypts
             }
             else
             {
-                nickname.text = Account.character.Nickname();
-                gold.text = Account.character.Gold().ToString();
-                crystal.text = Account.character.Crystal().ToString();
+                nickname.text = Account.character.nickname;
+                gold.text = Account.character.gold.ToString();
                 client.StartMain();
             }
         }
@@ -43,15 +44,14 @@ namespace Assets.Scrypts
                 try
                 {
                     Thread.Sleep(1000);
-                    if (Account.character.Nickname() == null)
+                    if (Account.character.nickname == null)
                     {
                         Debug.Log("No message with character");
                     }
-                    if (Account.character.Nickname() != null)
+                    if (Account.character.nickname != null)
                     {
-                        nickname.text = Account.character.Nickname();
-                        gold.text = Account.character.Gold().ToString();
-                        crystal.text = Account.character.Crystal().ToString();
+                        nickname.text = Account.character.nickname;
+                        gold.text = Account.character.gold.ToString();
                         client.StartMain();
                         threadAuth.Abort();
                     }

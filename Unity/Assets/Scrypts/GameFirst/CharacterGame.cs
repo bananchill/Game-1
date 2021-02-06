@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace Assets.Scrypts
@@ -7,16 +8,19 @@ namespace Assets.Scrypts
     {
         public static List<Chest> listChests;
         public static List<EnemyBot> listEnemy;
-        public static GameObject objChest, objEnemy;
+        public static GameObject objCharacter, objChest, objEnemy;
         private float x;
         private float z;
         public static bool isGame = false;
         public static bool isSpawn = false;
+        public static bool isTimer = false;
+        public static Thread threadTimer;
         private GameServer gameServer;
 
 
         void Start()
         {
+            objCharacter = GameObject.FindGameObjectWithTag("Player");
             objChest = Resources.Load<GameObject>("Chest") as GameObject;
             objEnemy = Resources.Load<GameObject>("Enemy") as GameObject;
             listChests = new List<Chest>();
@@ -29,20 +33,28 @@ namespace Assets.Scrypts
 
         void Update()
         {
-            if(isSpawn)
+            if (isSpawn)
             {
                 SetChest();
                 SetEnemy();
+                Account.character.health = 100;
                 isSpawn = false;
             }
 
             if (isGame)
             {
+                if (!isTimer)
+                {
+                    threadTimer = new Thread(new ThreadStart(TimerWork));
+                    threadTimer.Start();
+                    isTimer = true;
+                }
+
                 if (Input.GetKey(KeyCode.W))
                 {
                     x = transform.position.x;
                     z = transform.position.z + 1;
-                    transform.position = new Vector3(x, 0, z);
+                    objCharacter.transform.position = new Vector3(x, 0, z);
                     gameServer.SendStep("W");
                 }
 
@@ -50,7 +62,7 @@ namespace Assets.Scrypts
                 {
                     x = transform.position.x;
                     z = transform.position.z - 1;
-                    transform.position = new Vector3(x, 0, z);
+                    objCharacter.transform.position = new Vector3(x, 0, z);
                     gameServer.SendStep("S");
                 }
 
@@ -58,7 +70,7 @@ namespace Assets.Scrypts
                 {
                     x = transform.position.x - 1;
                     z = transform.position.z;
-                    transform.position = new Vector3(x, 0, z);
+                    objCharacter.transform.position = new Vector3(x, 0, z);
                     gameServer.SendStep("A");
                 }
 
@@ -66,10 +78,33 @@ namespace Assets.Scrypts
                 {
                     x = transform.position.x + 1;
                     z = transform.position.z;
-                    transform.position = new Vector3(x, 0, z);
+                    objCharacter.transform.position = new Vector3(x, 0, z);
                     gameServer.SendStep("D");
                 }
+
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    gameServer.SendStep("DOWN_E");
+                }
+
+                if (Input.GetKeyUp(KeyCode.E))
+                {
+                    gameServer.SendStep("UP_E");
+                }
             }
+        }
+
+        private void TimerWork()
+        {
+            int timeRound = 0;
+            while (timeRound != 60)
+            {
+                Debug.Log(timeRound);
+                timeRound++;
+                Thread.Sleep(1000);
+            }
+            isGame = false;
+            threadTimer.Abort();
         }
 
         public static void SetChest()
@@ -85,7 +120,8 @@ namespace Assets.Scrypts
         {
             foreach (EnemyBot enemy in listEnemy)
             {
-                Instantiate(objEnemy, new Vector3(enemy.x, 0, enemy.z), Quaternion.identity);
+                var o = Instantiate(objEnemy, new Vector3(enemy.x, 10, enemy.z), Quaternion.identity);
+                o.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             }
         }
 
@@ -132,9 +168,9 @@ namespace Assets.Scrypts
 
         public static Chest SearchChest(float x, float z)
         {
-            foreach(Chest chest in listChests)
+            foreach (Chest chest in listChests)
             {
-                if(chest.x == x && chest.z == z)
+                if (chest.x == x && chest.z == z)
                 {
                     return chest;
                 }

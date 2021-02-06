@@ -63,12 +63,12 @@ namespace Assets.Scrypts
                     ServerClose();
                     return;
                 }
-                if (message.Type() == MessageType.CONNECTION_REQUEST && count == 0)
+                if (message.type == MessageType.CONNECTION_REQUEST && count == 0)
                 {
                     connection.Send(new Message(MessageType.CONNECTION_ACCEPTED));
                     count++;
                 }
-                else if (message.Type() == MessageType.CONNECTION_ACCEPTED)
+                else if (message.type == MessageType.CONNECTION_ACCEPTED)
                 {
                     NotifyConnectionStatusChanged(true);
                     ConsoleHelper.WriteMessage("Соединение установлено.");

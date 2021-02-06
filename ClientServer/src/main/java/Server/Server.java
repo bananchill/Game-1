@@ -18,6 +18,7 @@ public abstract class Server implements SendMessage {
     public static List<Client> connectionList = new ArrayList<>();
 
     public abstract void startHandler(Socket socket);
+
     public abstract void serverMainLoop(Client client) throws IOException;
 
     public void start(int port) throws IOException {
@@ -80,7 +81,7 @@ public abstract class Server implements SendMessage {
         client.setConnection(connection);
 
         String mess = client.getId() + "#" + client.getNickname() + "#" + client.getPassword() + "#" + client.getEmail() +
-                "#" + client.getGold() + "#" + client.getCrystal();
+                "#" + client.getGold();
 
         DatabaseHelper.setStatus(client.getId(), true);
 
@@ -96,8 +97,8 @@ public abstract class Server implements SendMessage {
                     client.getConnection().send(new Message(MessageType.TEST_WORK));
                     if (!client.isOnline()) {
                         Thread.sleep(1000);
-                        if (!!client.isOnline()) {
-                            clientRemove(client);
+                        if (!client.isOnline()) {
+                            clientRemove(client, false);
                             System.out.println("check close");
                         }
                     }
@@ -114,10 +115,12 @@ public abstract class Server implements SendMessage {
         }
     }
 
-    public static void clientRemove(Client client) {
-        client.close();
-        connectionList.remove(client);
-        DatabaseHelper.setStatus(client.getId(), false);
+    public static void clientRemove(Client client, boolean isGame) {
+        if (isGame) {
+            client.close();
+            connectionList.remove(client);
+            DatabaseHelper.setStatus(client.getId(), false);
+        }
         ConsoleHelper.writeMessage("Client " + client.getConnection() + " disconnected");
     }
 }

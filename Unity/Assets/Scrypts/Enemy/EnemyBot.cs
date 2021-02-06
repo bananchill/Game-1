@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scrypts
 {
-    public abstract class EnemyBot
+    public class EnemyBot
     {
         public EnemyType type { get; set; }
         public int health { get; set; }
@@ -26,7 +26,10 @@
             return "Enemy = type:" + type + "; damage: " + damage + "; health " + health;
         }
 
-        public abstract void attack();
+        public void attack(Character character)
+        {
+            character.health -= damage;
+        }
 
         public void die()
         {

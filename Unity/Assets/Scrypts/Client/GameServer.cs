@@ -8,7 +8,7 @@
 
         public void ConnectToServer()
         {
-            string data = Account.character.Mail() + "#" + Account.character.Password();
+            string data = Account.character.mail + "#" + Account.character.password;
             connection.Send(new Message(MessageType.AUTHORIZATION, data));
 
             while (true)
@@ -19,7 +19,7 @@
                     ServerClose();
                     return;
                 }
-                if (message.Type() == MessageType.AUTHORIZATION)
+                if (message.type == MessageType.AUTHORIZATION)
                 {
                     NotifyConnectionStatusChanged(true);
                     ConsoleHelper.WriteMessage("Account accept.");
@@ -37,41 +37,41 @@
 
                 if (message != null)
                 {
-                    if (message.Type() == MessageType.LOADING_GAME && !loagingGame)
+                    if (message.type == MessageType.LOADING_GAME && !loagingGame)
                     {
                         CharacterGame.WaitTheGame();
                         message = connection.Receive();
                         loagingGame = true;
                     }
-                    if (message.Type() == MessageType.SET_INFO)
+                    if (message.type == MessageType.SET_INFO)
                     {
                         while (true)
                         {
                             message = connection.Receive();
                             if (message != null)
                             {
-                                if (message.Type() == MessageType.SET_CHEST)
+                                if (message.type == MessageType.SET_CHEST)
                                 {
                                     Chest chest = Converter.XmlToChest(message.data);
                                     CharacterGame.listChests.Add(chest);
                                 }
-                                if (message.Type() == MessageType.SET_ENEMY)
+                                if (message.type == MessageType.SET_ENEMY)
                                 {
-                                    //EnemyBot enemy = Converter.XmlToEnemy(message.data);
-                                    //CharacterGame.listEnemy.Add(enemy);
+                                    EnemyBot enemy = Converter.XmlToEnemy(message.data);
+                                    CharacterGame.listEnemy.Add(enemy);
                                 }
-                                if (message.Type() == MessageType.SET_END)
+                                if (message.type == MessageType.SET_END)
                                 {
                                     CharacterGame.isSpawn = true;
-                                    CharacterGame.isGame = true;
+                                    connection.Send(new Message(MessageType.READY));
                                     break;
                                 }
                             }
                         }
                     }
-                    if (message.Type() == MessageType.GOT_CHEST)
+                    if (message.type == MessageType.GOT_CHEST)
                     {
-                        string[] data = message.Data().Split('#');
+                        string[] data = message.data.Split('#');
                         Chest chest = CharacterGame.SearchChest(float.Parse(data[0]), float.Parse(data[1]));
                         if (chest != null)
                         {
@@ -81,14 +81,23 @@
                             }
                         }
                     }
-                    if (message.Type() == MessageType.GOT_ENEMY)
+                    if (message.type == MessageType.GOT_ENEMY)
                     {
-                        //string[] data = message.Data().Split('#');
-                        //EnemyBot chest = CharacterGame.SearchEnemy(float.Parse(data[0]), float.Parse(data[1]));
-                        //if (chest != null)
-                        //{
-                        //    ConsoleHelper.WriteMessage(chest.ToString());
-                        //}
+                        string[] data = message.data.Split('#');
+                        EnemyBot enemy = CharacterGame.SearchEnemy(float.Parse(data[0]), float.Parse(data[1]));
+                        if (enemy != null)
+                        {
+                            enemy.attack(Account.character);
+                            ConsoleHelper.WriteMessage(Account.character.health + " HP");
+                        }
+                    }
+                    if (message.type == MessageType.START)
+                    {
+                        CharacterGame.isGame = true;
+                    }
+                    if (message.type == MessageType.ROUND_END)
+                    {
+                        CharacterGame.isGame = false;
                     }
                     online = true;
                 }
@@ -115,6 +124,12 @@
                     break;
                 case "D":
                     connection.Send(new Message(MessageType.D));
+                    break;
+                case "DOWN_E":
+                    connection.Send(new Message(MessageType.DOWN_E));
+                    break;
+                case "UP_E":
+                    connection.Send(new Message(MessageType.UP_E));
                     break;
             }
         }

@@ -2,9 +2,9 @@
 {
     public class Message
     {
-        public MessageType type;
-        public string data;
-        public string xml;
+        public MessageType type { get; set; }
+        public string data { get; set; }
+        public string xml { get; set; }
 
         public Message() { }
 
@@ -19,21 +19,6 @@
             this.type = type;
             this.data = data;
             xml = Converter.StrignToXml(type, data);
-        }
-
-        public MessageType Type()
-        {
-            return type;
-        }
-
-        public string Data()
-        {
-            return data;
-        }
-
-        public string Xml()
-        {
-            return xml;
         }
     }
 }
