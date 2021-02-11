@@ -3,7 +3,7 @@ package Server;
 import Server.Client.Client;
 import Server.Database.DatabaseHelper;
 import Server.Interfaces.SendMessage;
-import Server.Message.Converter;
+import Server.Interfaces.ServerMainLoop;
 import Server.Message.Message;
 import Server.Message.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,12 +14,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Server implements SendMessage {
+public abstract class Server implements SendMessage, ServerMainLoop {
     public static List<Client> connectionList = new ArrayList<>();
 
     public abstract void startHandler(Socket socket);
-
-    public abstract void serverMainLoop(Client client) throws IOException;
 
     public void start(int port) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(port)) {

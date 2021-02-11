@@ -5,6 +5,7 @@ import Server.Game.Chest.Chest;
 import Server.Game.Enemy.EnemyBot;
 import Server.Game.Item.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
@@ -31,6 +32,9 @@ public class Client {
     public Client(Connection connection) {
         this.connection = connection;
         status = true;
+        listChest = new ArrayList<>();
+        listEnemy = new ArrayList<>();
+        listItem = new ArrayList<>();
     }
 
     public Client(String nickname, String password, String email, int gold, boolean status) {
@@ -96,8 +100,8 @@ public class Client {
         return listItem;
     }
 
-    public void setListItem(List<Item> listItem) {
-        this.listItem = listItem;
+    public void addListItem(Item item) {
+        this.listItem.add(item);
     }
 
     public List<Chest> getListChest() {

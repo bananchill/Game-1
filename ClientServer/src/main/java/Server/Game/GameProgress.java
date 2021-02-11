@@ -1,6 +1,7 @@
 package Server.Game;
 
 import Server.Client.Client;
+import Server.ConsoleHelper;
 import Server.Game.Chest.Chest;
 import Server.Game.Chest.ChestType;
 import Server.Game.Enemy.EnemyBot;
@@ -8,11 +9,13 @@ import Server.Game.Enemy.EnemyType;
 import Server.Game.Item.Item;
 import Server.Game.Item.ItemType;
 import Server.Game.Server.GameServer;
+import Server.Interfaces.ServerMainLoop;
 import Server.Message.Converter;
 import Server.Message.Message;
 import Server.Message.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,7 @@ public class GameProgress extends Thread {
         startGame();
 
         firstRound();
+        secondRound();
     }
 
     private void firstRound() {
@@ -51,11 +55,10 @@ public class GameProgress extends Thread {
         while (timeRound != 60) {
             try {
                 Thread.sleep(1000);
+                timeRound++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            timeRound++;
         }
 
         try {
@@ -64,6 +67,10 @@ public class GameProgress extends Thread {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    private void secondRound() {
+
     }
 
     private void startGame() {
@@ -328,7 +335,7 @@ public class GameProgress extends Thread {
                 gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
 //                gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
             } catch (JsonProcessingException e) {
-                 e.printStackTrace();
+                e.printStackTrace();
             }
         }
 

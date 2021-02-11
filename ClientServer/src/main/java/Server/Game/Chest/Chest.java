@@ -20,6 +20,8 @@ public class Chest {
     @JacksonXmlElementWrapper(localName = "listItem")
     private List<Item> listItem;
 
+    private boolean isOpen = false;
+
     public Chest() {
     }
 
@@ -44,5 +46,13 @@ public class Chest {
 
     public float getZ() {
         return z;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scrypts
 {
@@ -16,6 +17,7 @@ namespace Assets.Scrypts
         public static bool isTimer = false;
         public static Thread threadTimer;
         private GameServer gameServer;
+        public Text timer;
 
 
         void Start()
@@ -99,7 +101,7 @@ namespace Assets.Scrypts
             int timeRound = 0;
             while (timeRound != 60)
             {
-                Debug.Log(timeRound);
+                //timer.text = timeRound.ToString();
                 timeRound++;
                 Thread.Sleep(1000);
             }

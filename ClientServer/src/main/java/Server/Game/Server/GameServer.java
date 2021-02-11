@@ -6,6 +6,7 @@ import Server.ConsoleHelper;
 import Server.Game.Chest.Chest;
 import Server.Game.Enemy.EnemyBot;
 import Server.Game.GameProgress;
+import Server.Game.Item.Item;
 import Server.Message.Message;
 import Server.Message.MessageType;
 import Server.Server;
@@ -107,11 +108,17 @@ public class GameServer extends Server {
                     client.setX(client.getX() + 1);
                     checkEnemyAndChest(client);
                     client.setOnline(true);
-                } else if (message.getType() == MessageType.DOWN_E && checkChest(client)) {
-                    System.out.println("DOWN_E");
+                } else if (message.getType() == MessageType.DOWN_E && checkChest(client) != null) {
+                    chest = checkChest(client);
+                    if (!chest.isOpen()) {
+                        for (Item item : chest.getListItem()) {
+                            client.addListItem(item);
+                            System.out.println(item.getDamage());
+                        }
+                        chest.setOpen(true);
+                    }
                     client.setOnline(true);
-                } else if (message.getType() == MessageType.UP_E && checkChest(client)) {
-                    System.out.println("UP_E");
+                } else if (message.getType() == MessageType.UP_E && checkChest(client) != null) {
                     client.setOnline(true);
                 } else if (message.getType() == MessageType.READY) {
                     client.setReady(true);
@@ -126,7 +133,7 @@ public class GameServer extends Server {
         }
     }
 
-    private boolean checkChest(Client client) {
+    private Chest checkChest(Client client) {
         for (GameProgress game : gameProgresses) {
             if (game.firstGamer.getConnection().equals(client.getConnection())) {
                 chest = game.isTheChestFar1(client.getX(), client.getZ());
@@ -135,15 +142,16 @@ public class GameServer extends Server {
         }
 
         if (chest != null) {
-            return true;
+            return chest;
         }
-        return false;
+        return null;
     }
 
     private void checkEnemyAndChest(Client client) {
         for (GameProgress game : gameProgresses) {
             if (game.firstGamer.getConnection().equals(client.getConnection())) { //TODO добавить для второго пользователя
                 chest = game.isTheChestFar1(client.getX(), client.getZ());
+                enemy = game.isTheEnemyFar1(client.getX(), client.getZ());
             }
         }
 

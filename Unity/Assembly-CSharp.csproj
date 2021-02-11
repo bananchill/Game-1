@@ -76,6 +76,8 @@
      <Compile Include="Assets\Scrypts\Message\MessageType.cs" />
      <Compile Include="Assets\Scrypts\Scene\Main\Authorization.cs" />
      <Compile Include="Assets\Scrypts\Scene\Main\Main.cs" />
+     <Compile Include="Assets\Scrypts\SecondGame\Card.cs" />
+     <Compile Include="Assets\Scrypts\SecondGame\Hand.cs" />
  <Reference Include="UnityEngine">
  <HintPath>D:/Code/2019.4.16f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
