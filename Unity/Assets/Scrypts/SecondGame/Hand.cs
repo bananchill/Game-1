@@ -2,15 +2,49 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Hand : MonoBehaviour, IDropHandler
+public enum FieldType
+{
+    SELF_HAND,
+    SELF_TABLE,
+    ENEMY_HAND,
+    ENEMY_TABLE
+}
+
+public class Hand : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public List<Transform> cards;
+    public FieldType type;
 
     public void OnDrop(PointerEventData eventData)
     {
-        Card card = eventData.pointerDrag.GetComponent<Card>();
+        if (type != FieldType.SELF_TABLE)
+            return;
+
+        CardMovemant card = eventData.pointerDrag.GetComponent<CardMovemant>();
         if (card)
             card.defaultParent = transform;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (eventData.pointerDrag == null || type == FieldType.ENEMY_TABLE)
+            return;
+
+        CardMovemant card = eventData.pointerDrag.GetComponent<CardMovemant>();
+
+        if (card)
+            card.defaultTempCardParent = transform;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (eventData.pointerDrag == null)
+            return;
+
+        CardMovemant card = eventData.pointerDrag.GetComponent<CardMovemant>();
+
+        if (card && card.defaultTempCardParent == transform)
+            card.defaultTempCardParent = card.defaultParent;
     }
 
     void Start()
