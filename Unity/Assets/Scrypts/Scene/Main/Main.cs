@@ -20,6 +20,7 @@ namespace Assets.Scrypts
             Debug.Log("Start app, client = " + Client.online);
 
             client.StartClient("localhost", 3000);
+            //client.StartClient("176.117.134.51", 14882);
             if (!Account.CheckCharacter())
             {
                 //authorizationMenuUI = Resources.Load<GameObject>("Authorization") as GameObject;
