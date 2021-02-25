@@ -4,7 +4,6 @@ import Server.Database.DatabaseHelper;
 import Server.Game.Server.GameServer;
 import Server.MainServer.MainServer;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Main {

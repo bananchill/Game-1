@@ -78,11 +78,12 @@
     <Compile Include="Assets\Scrypts\Message\MessageType.cs" />
     <Compile Include="Assets\Scrypts\Scene\Main\Authorization.cs" />
     <Compile Include="Assets\Scrypts\Scene\Main\Main.cs" />
+    <Compile Include="Assets\Scrypts\SecondGame\AttackedCard.cs" />
     <Compile Include="Assets\Scrypts\SecondGame\CardInfoScr.cs" />
-    <Compile Include="Assets\Scrypts\SecondGame\GameManagerScr.cs" />
-    <Compile Include="Assets\Scrypts\SecondGame\DropPlaceScr.cs" />
-    <Compile Include="Assets\Scrypts\SecondGame\CardMovemantScr.cs" />
     <Compile Include="Assets\Scrypts\SecondGame\CardManagerScr.cs" />
+    <Compile Include="Assets\Scrypts\SecondGame\CardMovemantScr.cs" />
+    <Compile Include="Assets\Scrypts\SecondGame\DropPlaceScr.cs" />
+    <Compile Include="Assets\Scrypts\SecondGame\GameManagerScr.cs" />
     <Reference Include="UnityEngine">
       <HintPath>D:/Code/2019.4.16f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

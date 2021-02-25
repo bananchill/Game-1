@@ -21,7 +21,8 @@ public class DropPlaceScr : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
             return;
 
         CardMovemantScr card = eventData.pointerDrag.GetComponent<CardMovemantScr>();
-        if (card)
+        if (card && card.GameManager.PlayerFieldCards.Count <= 6 &&
+            card.GameManager.IsPlayerTurn)
         {
             card.GameManager.PlayerFieldCards.Remove(card.GetComponent<CardInfoScr>());
             card.GameManager.PlayerFieldCards.Add(card.GetComponent<CardInfoScr>());
@@ -31,7 +32,8 @@ public class DropPlaceScr : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (eventData.pointerDrag == null || type == FieldType.ENEMY_TABLE || type == FieldType.ENEMY_HAND)
+        if (eventData.pointerDrag == null || type == FieldType.ENEMY_TABLE || type == FieldType.ENEMY_HAND
+            || type == FieldType.SELF_HAND)
             return;
 
         CardMovemantScr card = eventData.pointerDrag.GetComponent<CardMovemantScr>();
