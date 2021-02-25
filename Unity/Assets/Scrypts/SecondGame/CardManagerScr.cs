@@ -7,6 +7,7 @@ public struct Card
     public Sprite Logo;
     public int Attack, Defense;
     public bool CanAttack;
+    public bool IsPlaced;
 
     public bool IsAlive
     {
@@ -23,6 +24,7 @@ public struct Card
         Attack = attack;
         Defense = defense;
         CanAttack = false;
+        IsPlaced = false;
     }
 
     public void ChangeAttackState(bool can)

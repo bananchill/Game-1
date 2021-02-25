@@ -79,6 +79,7 @@
     <Compile Include="Assets\Scrypts\Scene\Main\Authorization.cs" />
     <Compile Include="Assets\Scrypts\Scene\Main\Main.cs" />
     <Compile Include="Assets\Scrypts\SecondGame\AttackedCard.cs" />
+    <Compile Include="Assets\Scrypts\SecondGame\AttackedHero.cs" />
     <Compile Include="Assets\Scrypts\SecondGame\CardInfoScr.cs" />
     <Compile Include="Assets\Scrypts\SecondGame\CardManagerScr.cs" />
     <Compile Include="Assets\Scrypts\SecondGame\CardMovemantScr.cs" />

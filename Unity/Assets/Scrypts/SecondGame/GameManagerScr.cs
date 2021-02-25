@@ -32,6 +32,12 @@ public class GameManagerScr : MonoBehaviour
     public Text TurnTimeTxt;
     public Button EndTurnBtn;
 
+    public int PlayerHP, EnemyHP;
+    public Text PlayerHPText, EnemyHPText;
+
+    public GameObject ResultGO;
+    public Text ResultText;
+
     public List<CardInfoScr> PlayerHandCards = new List<CardInfoScr>(),
                           PlayerFieldCards = new List<CardInfoScr>(),
                           EnemyHandCards = new List<CardInfoScr>(),
@@ -53,6 +59,8 @@ public class GameManagerScr : MonoBehaviour
 
         GiveHandCards(CurrentGame.EnemyDeck, EnemyHand);
         GiveHandCards(CurrentGame.PlayerDeck, PlayerHand);
+
+        PlayerHP = EnemyHP = 30;
 
         StartCoroutine(TurnFunc());
     }
@@ -135,7 +143,7 @@ public class GameManagerScr : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             if (EnemyFieldCards.Count > 5)
-                return;
+                break;
 
             cards[0].ShowCardInfo(cards[0].SelfCard, false);
             cards[0].transform.SetParent(EnemyField);
@@ -144,7 +152,7 @@ public class GameManagerScr : MonoBehaviour
             EnemyHandCards.Remove(cards[0]);
         }
 
-        foreach(var activeCard in EnemyFieldCards.FindAll(x => x.SelfCard.CanAttack))
+        foreach (var activeCard in EnemyFieldCards.FindAll(x => x.SelfCard.CanAttack))
         {
             if (PlayerFieldCards.Count == 0)
                 return;
@@ -194,6 +202,12 @@ public class GameManagerScr : MonoBehaviour
             enemyCard.RefreshData();
     }
 
+    private void ShowHP()
+    {
+        EnemyHPText.text = EnemyHP.ToString();
+        PlayerHPText.text = PlayerHP.ToString();
+    }
+
     void DesctoyCard(CardInfoScr card)
     {
         card.GetComponent<CardMovemantScr>().OnEndDrag(null);
@@ -205,5 +219,35 @@ public class GameManagerScr : MonoBehaviour
             PlayerFieldCards.Remove(card);
 
         Destroy(card.gameObject);
+    }
+
+    public void DamageHero(CardInfoScr card, bool isEnemyAttacke)
+    {
+        if (isEnemyAttacke)
+            EnemyHP = Mathf.Clamp(EnemyHP - card.SelfCard.Attack, 0, int.MaxValue);
+        else PlayerHP = Mathf.Clamp(PlayerHP - card.SelfCard.Attack, 0, int.MaxValue);
+
+        ShowHP();
+        card.DeHighLightCard();
+        ChackForResult();
+    }
+
+    void ChackForResult()
+    {
+        if (EnemyHP == 0 || PlayerHP == 0)
+        {
+            ResultGO.SetActive(true);
+            StopAllCoroutines();
+
+            if (EnemyHP == 0)
+                ResultText.text = "You won";
+            else ResultText.text = "You lose";
+        }
+        else
+        {
+
+        }
+
+        StopAllCoroutines();
     }
 }
