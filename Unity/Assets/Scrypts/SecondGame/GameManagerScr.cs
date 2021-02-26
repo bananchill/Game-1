@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Game
+public class Game//canvas
 {
     public List<Card> EnemyDeck, PlayerDeck;
 

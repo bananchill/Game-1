@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CardMovemantScr: MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class CardMovemantScr: MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler// card
 {
     public Transform defaultParent, defaultTempCardParent;
     public GameObject TempCardGO;

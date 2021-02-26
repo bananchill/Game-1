@@ -13,6 +13,14 @@ public class Item {
     @JacksonXmlProperty(localName = "health")
     private int health;
 
+    private String name;
+    private boolean canAttack;
+    private boolean isPlaced;
+
+    public boolean isAlive() {
+        return health > 0;
+    }
+
     public Item() {
     }
 
@@ -20,6 +28,14 @@ public class Item {
         this.type = type;
         this.damage = damage;
         this.health = health;
+    }
+
+    public Item(String name, int damage, int health) {
+        this.name = name;
+        this.damage = damage;
+        this.health = health;
+        canAttack = false;
+        isPlaced = false;
     }
 
     public ItemType getType() {
@@ -32,5 +48,9 @@ public class Item {
 
     public int getHealth() {
         return health;
+    }
+
+    public void changeAttackState(boolean value) {
+        canAttack = value;
     }
 }

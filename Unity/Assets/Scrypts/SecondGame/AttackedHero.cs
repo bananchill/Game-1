@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class AttackedHero : MonoBehaviour, IDropHandler
+public class AttackedHero : MonoBehaviour, IDropHandler//face your and enemy
 {
     public enum HeroType
     {

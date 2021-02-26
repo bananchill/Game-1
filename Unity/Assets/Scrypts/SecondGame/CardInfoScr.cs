@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class CardInfoScr : MonoBehaviour
+public class CardInfoScr : MonoBehaviour// card
 {
     public Card SelfCard;
     public Image Logo;

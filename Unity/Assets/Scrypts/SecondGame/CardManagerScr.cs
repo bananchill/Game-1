@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public struct Card
+public struct Card//maincamera
 {
     public string Name;
     public Sprite Logo;

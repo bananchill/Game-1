@@ -10,7 +10,7 @@ public enum FieldType
     ENEMY_TABLE
 }
 
-public class DropPlaceScr : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class DropPlaceScr : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler// table and hand
 {
     public List<Transform> cards;
     public FieldType type;

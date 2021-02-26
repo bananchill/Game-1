@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class AttackedCard: MonoBehaviour, IDropHandler
+public class AttackedCard: MonoBehaviour, IDropHandler// card
 {
     public void OnDrop(PointerEventData eventData)
     {

@@ -92,7 +92,7 @@ public class DatabaseHelper {
                         result.getString("email"), result.getInt("gold"), result.getBoolean("status"));
             }
 
-            if(client == null) {
+            if (client == null) {
                 return null;
             }
         } catch (SQLException e) {
