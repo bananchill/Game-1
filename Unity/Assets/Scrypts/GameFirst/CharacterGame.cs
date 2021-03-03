@@ -55,7 +55,17 @@ namespace Assets.Scrypts
                     StartCoroutine(Timer());
                 }
 
-
+                x = Input.GetAxisRaw("Horizontal");
+                z = Input.GetAxisRaw("Vertical");
+                objCharacter.transform.position += new Vector3(x, 0, z);
+                if (Input.GetKey(KeyCode.W))
+                    gameServer.SendStep("W");
+                if (Input.GetKey(KeyCode.S))
+                    gameServer.SendStep("S");
+                if (Input.GetKey(KeyCode.A))
+                    gameServer.SendStep("A");
+                if (Input.GetKey(KeyCode.D))
+                    gameServer.SendStep("D");
 
                 //if (Input.GetKey(KeyCode.W))
                 //{

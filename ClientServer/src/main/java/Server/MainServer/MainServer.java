@@ -86,7 +86,7 @@ public class MainServer extends Server implements SendBroadcast {
         String nickname = data[2];
 
         try {
-            DatabaseHelper.addCharacter(new Client(nickname, password, mail, 1000, true));
+            //DatabaseHelper.addCharacter(new Client(nickname, password, mail, 1000, true));
             ConsoleHelper.writeMessage("Client was added");
         } catch (Exception e) {
             sendMessage(connection, new Message(MessageType.ERROR_REGISTRATION));
@@ -94,13 +94,14 @@ public class MainServer extends Server implements SendBroadcast {
             return null;
         }
 
-        Client client = DatabaseHelper.entryCli(mail, password);
+        //Client client = DatabaseHelper.entryCli(mail, password);
+        Client client = new Client();
         client.setConnection(connection);
 
         String mess = client.getId() + "#" + client.getNickname() + "#" + client.getPassword() + "#" + client.getEmail() + "#" +
                 client.getGold();
 
-        DatabaseHelper.setStatus(client.getId(), true);
+        //DatabaseHelper.setStatus(client.getId(), true);
 
         sendMessage(connection, new Message(MessageType.REGISTRATION, mess));
         return client;
@@ -109,6 +110,7 @@ public class MainServer extends Server implements SendBroadcast {
     private void clientGoGame(Client client) {
         connectionList.remove(client);
         clientRemove(client, true);
+        GameServer.potentialPlayersList.add(client);
         GameServer.potentialPlayersList.add(client);
         ConsoleHelper.writeMessage("Client " + client.getNickname() + " goes to game");
     }

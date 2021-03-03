@@ -69,7 +69,8 @@ public abstract class Server implements SendMessage, ServerMainLoop {
             ConsoleHelper.writeMessage("Client wasn't founded");
             return null;
         }
-        Client client = DatabaseHelper.entryCli(mail, password);
+        //Client client = DatabaseHelper.entryCli(mail, password);
+        Client client = new Client(1, mail, password, mail, 1000, true);
 
         if (client == null) {
             sendMessage(connection, new Message(MessageType.ERROR_AUTHORIZATION));
@@ -81,7 +82,7 @@ public abstract class Server implements SendMessage, ServerMainLoop {
         String mess = client.getId() + "#" + client.getNickname() + "#" + client.getPassword() + "#" + client.getEmail() +
                 "#" + client.getGold();
 
-        DatabaseHelper.setStatus(client.getId(), true);
+        //DatabaseHelper.setStatus(client.getId(), true);
 
         ConsoleHelper.writeMessage("Client was founded");
         sendMessage(connection, new Message(MessageType.AUTHORIZATION, mess));
@@ -117,7 +118,7 @@ public abstract class Server implements SendMessage, ServerMainLoop {
         if (isGame) {
             client.close();
             connectionList.remove(client);
-            DatabaseHelper.setStatus(client.getId(), false);
+            //DatabaseHelper.setStatus(client.getId(), false);
         }
         ConsoleHelper.writeMessage("Client " + client.getConnection() + " disconnected");
     }
