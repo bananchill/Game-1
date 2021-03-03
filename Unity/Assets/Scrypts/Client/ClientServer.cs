@@ -70,8 +70,8 @@ namespace Assets.Scrypts
         public static void Entry(Character character)
         {
             //string data = character.Mail() + "#" + character.Password();
-            string data = "doctor@mail.ru" + "#" + "password1234";
-            //string data1 = character.Mail() + "#" + character.Password() + "#" + Converter.CharacterToXml(character);
+            //string data = "doctor@mail.ru" + "#" + "password1234";
+            string data = "keosha@mail.ru" + "#" + "password1234";
             connection.Send(new Message(MessageType.AUTHORIZATION, data));
             while (true)
             {

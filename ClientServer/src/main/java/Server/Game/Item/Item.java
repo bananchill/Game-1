@@ -6,15 +6,16 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "Item")
 public class Item {
 
-    @JacksonXmlProperty(localName = "itemType")
-    private ItemType type;
+    @JacksonXmlProperty(localName = "name")
+    private String name;
+
     @JacksonXmlProperty(localName = "damage")
     private int damage;
+
     @JacksonXmlProperty(localName = "health")
     private int health;
 
-    private String name;
-    private boolean canAttack;
+        private boolean canAttack;
     private boolean isPlaced;
 
     public boolean isAlive() {
@@ -24,8 +25,7 @@ public class Item {
     public Item() {
     }
 
-    public Item(ItemType type, int damage, int health) {
-        this.type = type;
+    public Item(int damage, int health) {
         this.damage = damage;
         this.health = health;
     }
@@ -36,10 +36,6 @@ public class Item {
         this.health = health;
         canAttack = false;
         isPlaced = false;
-    }
-
-    public ItemType getType() {
-        return type;
     }
 
     public int getDamage() {

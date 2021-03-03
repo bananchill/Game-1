@@ -19,6 +19,8 @@
         SET_INFO,
         SET_CHEST,
         SET_ENEMY,
+        SET_CARD_START,
+        SET_CARD,
         SET_END,
         W,
         A,

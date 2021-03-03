@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Assets.Scrypts
@@ -12,12 +14,12 @@ namespace Assets.Scrypts
         public static GameObject objCharacter, objChest, objEnemy;
         private float x;
         private float z;
-        public static bool isGame = false;
+        public static bool roundFirst, roundSecond = false;
         public static bool isSpawn = false;
         public static bool isTimer = false;
-        public static Thread threadTimer;
         private GameServer gameServer;
         public Text timer;
+        private int time;
 
 
         void Start()
@@ -28,7 +30,8 @@ namespace Assets.Scrypts
             listChests = new List<Chest>();
             listEnemy = new List<EnemyBot>();
             gameServer = new GameServer();
-            //gameServer.StartClient("176.117.134.51", 14883);
+            //gameServer.StartClient("176.117.134.51", 14883);//Maks
+            //gameServer.StartClient("93.100.216.84", 3001);//My
             gameServer.StartClient("localhost", 3001);
             gameServer.ConnectToServer();
             gameServer.StartMain();
@@ -44,46 +47,47 @@ namespace Assets.Scrypts
                 isSpawn = false;
             }
 
-            if (isGame)
+            if (roundFirst)
             {
                 if (!isTimer)
                 {
-                    threadTimer = new Thread(new ThreadStart(TimerWork));
-                    threadTimer.Start();
                     isTimer = true;
+                    StartCoroutine(Timer());
                 }
 
-                if (Input.GetKey(KeyCode.W))
-                {
-                    x = transform.position.x;
-                    z = transform.position.z + 1;
-                    objCharacter.transform.position = new Vector3(x, 0, z);
-                    gameServer.SendStep("W");
-                }
 
-                if (Input.GetKey(KeyCode.S))
-                {
-                    x = transform.position.x;
-                    z = transform.position.z - 1;
-                    objCharacter.transform.position = new Vector3(x, 0, z);
-                    gameServer.SendStep("S");
-                }
 
-                if (Input.GetKey(KeyCode.A))
-                {
-                    x = transform.position.x - 1;
-                    z = transform.position.z;
-                    objCharacter.transform.position = new Vector3(x, 0, z);
-                    gameServer.SendStep("A");
-                }
+                //if (Input.GetKey(KeyCode.W))
+                //{
+                //    x = transform.position.x;
+                //    z = transform.position.z + 1;
+                //    objCharacter.transform.position = new Vector3(x, 0, z);
+                //    gameServer.SendStep("W");
+                //}
 
-                if (Input.GetKey(KeyCode.D))
-                {
-                    x = transform.position.x + 1;
-                    z = transform.position.z;
-                    objCharacter.transform.position = new Vector3(x, 0, z);
-                    gameServer.SendStep("D");
-                }
+                //if (Input.GetKey(KeyCode.S))
+                //{
+                //    x = transform.position.x;
+                //    z = transform.position.z - 1;
+                //    objCharacter.transform.position = new Vector3(x, 0, z);
+                //    gameServer.SendStep("S");
+                //}
+
+                //if (Input.GetKey(KeyCode.A))
+                //{
+                //    x = transform.position.x - 1;
+                //    z = transform.position.z;
+                //    objCharacter.transform.position = new Vector3(x, 0, z);
+                //    gameServer.SendStep("A");
+                //}
+
+                //if (Input.GetKey(KeyCode.D))
+                //{
+                //    x = transform.position.x + 1;
+                //    z = transform.position.z;
+                //    objCharacter.transform.position = new Vector3(x, 0, z);
+                //    gameServer.SendStep("D");
+                //}
 
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -95,19 +99,22 @@ namespace Assets.Scrypts
                     gameServer.SendStep("UP_E");
                 }
             }
+            else if (roundSecond)
+            {
+                SceneManager.LoadScene("SecondGame");
+            }
         }
 
-        private void TimerWork()
+        IEnumerator Timer()
         {
-            int timeRound = 0;
-            while (timeRound != 60)
+            time = 60;
+
+            while (time-- > 0)
             {
-                //timer.text = timeRound.ToString();
-                timeRound++;
-                Thread.Sleep(1000);
+                timer.text = time.ToString();
+                yield return new WaitForSeconds(1);
             }
-            isGame = false;
-            threadTimer.Abort();
+            roundFirst = false;
         }
 
         public static void SetChest()

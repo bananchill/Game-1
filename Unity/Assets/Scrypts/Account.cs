@@ -18,7 +18,7 @@ namespace Assets.Scrypts
             //    //ClientServer.Entry(character);
             //}
 
-            character = new Character("doctor@mail.ru", "password1234");
+            character = new Character("keosha@mail.ru", "password1234");
             ClientServer.Entry(character);
 
             return true;

@@ -10,8 +10,6 @@ import java.util.List;
 @JacksonXmlRootElement(localName = "Chest")
 public class Chest {
 
-    @JacksonXmlProperty(localName = "chestType")
-    private ChestType type;
     @JacksonXmlProperty(localName = "x")
     private float x;
     @JacksonXmlProperty(localName = "z")
@@ -25,15 +23,10 @@ public class Chest {
     public Chest() {
     }
 
-    public Chest(ChestType type, float x, float z, List<Item> listItem) {
-        this.type = type;
+    public Chest(float x, float z, List<Item> listItem) {
         this.x = x;
         this.z = z;
         this.listItem = listItem;
-    }
-
-    public ChestType getType() {
-        return type;
     }
 
     public List<Item> getListItem() {

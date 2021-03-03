@@ -46,6 +46,17 @@ namespace Assets.Scrypts
             return message;
         }
 
+        public static Item XmlToCard(string s)
+        {
+            Item message;
+            var serializer = new XmlSerializer(typeof(Item));
+            using (var xmlStream = new StringReader(s))
+            {
+                message = (Item)serializer.Deserialize(xmlStream);
+            }
+            return message;
+        }
+
         public static EnemyBot XmlToEnemy(string s)
         {
             EnemyBot message;

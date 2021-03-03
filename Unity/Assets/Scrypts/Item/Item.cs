@@ -6,8 +6,8 @@ namespace Assets.Scrypts
     [Serializable]
     public class Item
     {
-        [XmlElement("itemType")]
-        public ItemType type { get; set; }
+        [XmlElement]
+        public string name { get; set; }
 
         [XmlElement]
         public int damage { get; set; }
@@ -19,16 +19,16 @@ namespace Assets.Scrypts
         {
         }
 
-        public Item(ItemType type, int damage, int health)
+        public Item(string name, int damage, int health)
         {
-            this.type = type;
+            this.name = name;
             this.damage = damage;
             this.health = health;
         }
 
         public override string ToString()
         {
-            return "Item = type:" + type + "; damage: " + damage + "; health " + health;
+            return "Item = type:" + name + "; damage: " + damage + "; health " + health;
         }
     }
 }

@@ -41,7 +41,7 @@ public class GameServer extends Server {
                 if (message != null) {
                     if (message.getType() == MessageType.AUTHORIZATION) {
                         ConsoleHelper.writeMessage("Client want to authorization in the game");
-                        if (checkAccount(connection, message)) {
+                        if (checkAccount(client, message)) {
                             sendMessage(client.getConnection(), new Message(MessageType.AUTHORIZATION));
                             break;
                         } else {
@@ -61,7 +61,7 @@ public class GameServer extends Server {
         }
     }
 
-    private boolean checkAccount(Connection connection, Message message) throws JsonProcessingException {
+    private boolean checkAccount(Client clientPat, Message message) throws JsonProcessingException {
         for (Client client : potentialPlayersList) {
             String[] data = message.getData().split("#");
             String mail, password;
@@ -70,15 +70,14 @@ public class GameServer extends Server {
                 mail = data[0];
                 password = data[1];
             } catch (Exception e) {
-                sendMessage(connection, new Message(MessageType.ERROR_AUTHORIZATION));
+                sendMessage(clientPat.getConnection(), new Message(MessageType.ERROR_AUTHORIZATION));
                 ConsoleHelper.writeMessage("Client wasn't founded");
                 return false;
             }
 
             if (client.getEmail().equals(mail) && client.getPassword().equals(password)) {
                 potentialPlayersList.remove(client);
-                client.setConnection(connection);
-                gamerList.add(client);
+                gamerList.add(clientPat);
                 return true;
             }
         }
@@ -113,7 +112,6 @@ public class GameServer extends Server {
                     if (!chest.isOpen()) {
                         for (Item item : chest.getListItem()) {
                             client.addListItem(item);
-                            System.out.println(item.getDamage());
                         }
                         chest.setOpen(true);
                     }
@@ -139,6 +137,11 @@ public class GameServer extends Server {
                 chest = game.isTheChestFar1(client.getX(), client.getZ());
                 enemy = game.isTheEnemyFar1(client.getX(), client.getZ());
             }
+
+//            if (game.secondGamer.getConnection().equals(client.getConnection())) {
+//                chest = game.isTheChestFar1(client.getX(), client.getZ());
+//                enemy = game.isTheEnemyFar1(client.getX(), client.getZ());
+//            }
         }
 
         if (chest != null) {
@@ -153,6 +156,11 @@ public class GameServer extends Server {
                 chest = game.isTheChestFar1(client.getX(), client.getZ());
                 enemy = game.isTheEnemyFar1(client.getX(), client.getZ());
             }
+
+//            if (game.secondGamer.getConnection().equals(client.getConnection())) { //TODO добавить для второго пользователя
+//                chest = game.isTheChestFar1(client.getX(), client.getZ());
+//                enemy = game.isTheEnemyFar1(client.getX(), client.getZ());
+//            }
         }
 
         if (chest != null) {
@@ -180,11 +188,9 @@ public class GameServer extends Server {
                 Client firstGamer = gamerList.get(idGamerInList);
                 gamerList.remove(firstGamer);
 
-//                idGamerInList = rnd(0, listSize - 2);
+//                idGamerInList = GameProgress.rnd(0, listSize - 2);
 //                Client secondGamer = gamerList.get(idGamerInList);
 //                gamerList.remove(secondGamer);
-//
-//                new GameProgress(firstGamer, secondGamer);
 
                 GameProgress thread = new GameProgress(firstGamer, null);
                 thread.start();

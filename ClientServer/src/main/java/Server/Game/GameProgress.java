@@ -52,7 +52,7 @@ public class GameProgress extends Thread {
             e.printStackTrace();
         }
 
-        while (timeRound != 60) {
+        while (timeRound != 20) {
             try {
                 Thread.sleep(1000);
                 timeRound++;
@@ -70,7 +70,26 @@ public class GameProgress extends Thread {
     }
 
     private void secondRound() {
+        sendInfo(MessageType.LOADING_GAME, null);
+        sendInfo(MessageType.SET_CARD_START, null);
 
+        for (Item item : firstGamer.getListItem()) {
+            try {
+                gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_CARD, parseCard(item)));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+//        for (Item item : secondGamer.getListItem()) {
+//            try {
+//                gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_CARD, parseCard(item)));
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+        sendInfo(MessageType.SET_END, null);
     }
 
     private void startGame() {
@@ -128,6 +147,16 @@ public class GameProgress extends Thread {
         return chestInfo;
     }
 
+    private String parseCard(Item item) {
+        String enemyInfo = "";
+        try {
+            enemyInfo = Converter.objectToXml(item);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return enemyInfo;
+    }
+
     private void createEnemy() {
         float x, z;
         int typeEnemy;
@@ -161,7 +190,7 @@ public class GameProgress extends Thread {
         int x, z;
         int typeChest;
 
-        for (int i = 0; i < 5; ) {
+        for (int i = 0; i < 20; ) {
             x = rnd(0, 3000);
             z = rnd(0, 1000);
             typeChest = rnd(0, 3);
@@ -171,23 +200,19 @@ public class GameProgress extends Thread {
             if (isTheChestFar(x, z)) {
                 switch (typeChest) {
                     case 0:
-                        type = ChestType.COMMON;
                         listItems = createListItem(ChestType.COMMON);
                         break;
                     case 1:
-                        type = ChestType.RARE;
                         listItems = createListItem(ChestType.RARE);
                         break;
                     case 2:
-                        type = ChestType.EPIC;
                         listItems = createListItem(ChestType.EPIC);
                         break;
                     case 3:
-                        type = ChestType.ENCHANTED;
                         listItems = createListItem(ChestType.ENCHANTED);
                         break;
                 }
-                Chest chest = new Chest(type, x, z, listItems);
+                Chest chest = new Chest(x, z, listItems);
 
                 listChests.add(chest);
                 i++;
@@ -225,17 +250,7 @@ public class GameProgress extends Thread {
         int countItems = rnd(1, 3);
 
         for (int i = 0; i < countItems; i++) {
-            int typeItem = rnd(0, 1);
-            switch (typeItem) {
-                case 0:
-                    type = ChestType.COMMON;
-                    listItems.add(new Item(ItemType.COMMON, rnd(1, 2), rnd(1, 5)));
-                    break;
-                case 1:
-                    type = ChestType.RARE;
-                    listItems.add(new Item(ItemType.RARE, rnd(1, 20), rnd(1, 1000)));
-                    break;
-            }
+            listItems.add(new Item("wolf", rnd(1, 20), rnd(1, 1000)));
         }
         return listItems;
     }
@@ -314,7 +329,7 @@ public class GameProgress extends Thread {
     private void sendInfo(MessageType type, String message) {
         try {
             gameServer.sendMessage(firstGamer.getConnection(), new Message(type, message));
-            //sendMessage(secondGamer.getConnection(), new Message(type, message));
+            //gameServer.sendMessage(secondGamer.getConnection(), new Message(type, message));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -333,7 +348,7 @@ public class GameProgress extends Thread {
         for (EnemyBot enemy : listEnemy) {
             try {
                 gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
-//                gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
+                //gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_ENEMY, parseEnemy(enemy)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -341,7 +356,7 @@ public class GameProgress extends Thread {
 
         try {
             gameServer.sendMessage(firstGamer.getConnection(), new Message(MessageType.SET_END, null));
-//            gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_END, null));
+            //gameServer.sendMessage(secondGamer.getConnection(), new Message(MessageType.SET_END, null));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,6 @@
-﻿namespace Assets.Scrypts
+﻿using System.Globalization;
+
+namespace Assets.Scrypts
 {
     class GameServer : Client, SendMessage
     {
@@ -54,6 +56,7 @@
                                 {
                                     Chest chest = Converter.XmlToChest(message.data);
                                     CharacterGame.listChests.Add(chest);
+                                    ConsoleHelper.WriteMessage(CharacterGame.listChests.Count + " count");
                                 }
                                 if (message.type == MessageType.SET_ENEMY)
                                 {
@@ -69,35 +72,61 @@
                             }
                         }
                     }
+
+                    if (message.type == MessageType.SET_CARD_START)
+                    {
+                        ConsoleHelper.WriteMessage("Set card!");
+                        while (true)
+                        {
+                            message = connection.Receive();
+                            if (message != null)
+                            {
+                                if (message.type == MessageType.SET_CARD)
+                                {
+                                    Item item = Converter.XmlToCard(message.data);
+                                    CardManagerList.allCards.Add(new Card(item.name, item.damage, item.health));
+                                }
+                                if (message.type == MessageType.SET_END)
+                                {
+                                    //CharacterGame.isSpawn = true;
+                                    connection.Send(new Message(MessageType.READY));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     if (message.type == MessageType.GOT_CHEST)
                     {
                         string[] data = message.data.Split('#');
-                        Chest chest = CharacterGame.SearchChest(float.Parse(data[0]), float.Parse(data[1]));
+                        Chest chest = CharacterGame.SearchChest(float.Parse(data[0], CultureInfo.InvariantCulture.NumberFormat), float.Parse(data[1], CultureInfo.InvariantCulture.NumberFormat));
                         if (chest != null)
                         {
                             foreach (Item item in chest.listItem)
                             {
-                                ConsoleHelper.WriteMessage(item.ToString());
+                                //ConsoleHelper.WriteMessage(item.ToString());
                             }
                         }
                     }
                     if (message.type == MessageType.GOT_ENEMY)
                     {
                         string[] data = message.data.Split('#');
-                        EnemyBot enemy = CharacterGame.SearchEnemy(float.Parse(data[0]), float.Parse(data[1]));
+                        EnemyBot enemy = CharacterGame.SearchEnemy(float.Parse(data[0], CultureInfo.InvariantCulture.NumberFormat), float.Parse(data[1], CultureInfo.InvariantCulture.NumberFormat));
                         if (enemy != null)
                         {
                             enemy.attack(Account.character);
-                            ConsoleHelper.WriteMessage(Account.character.health + " HP");
+                            //ConsoleHelper.WriteMessage(Account.character.health + " HP");
                         }
                     }
                     if (message.type == MessageType.START)
                     {
-                        CharacterGame.isGame = true;
+                        CharacterGame.roundFirst = true;
+                        loagingGame = false;
                     }
                     if (message.type == MessageType.ROUND_END)
                     {
-                        CharacterGame.isGame = false;
+                        CharacterGame.roundFirst = false;
+                        CharacterGame.roundSecond = true;
                     }
                     online = true;
                 }
